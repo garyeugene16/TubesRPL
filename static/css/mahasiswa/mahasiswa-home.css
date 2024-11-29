@@ -1,0 +1,158 @@
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  color: #fff;
+  background-color: #121212;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  height: 100vh;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  grid-template-rows: auto;
+  height: 100%;
+}
+
+
+/* Sidebar */
+.sidebar {
+  background: #1c1c1c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.sidebar .title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.sidebar .menu {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.sidebar .menu li {
+  margin: 15px 0;
+}
+
+.sidebar .menu li a {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 20px;
+  display: block;
+  border-radius: 5px;
+}
+.sidebar .menu li a {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 20px;
+  display: block;
+  border-radius: 10px;
+}
+.sidebar .menu li:hover{
+  background-color: #4a91e288;
+  border-radius: 10px;
+}
+
+.sidebar .sign-out {
+  margin-top: auto;
+  color: red;
+  text-decoration: none;
+}
+
+#home{
+  background: #2d89ef;
+  border-radius: 10px;
+}
+
+
+
+/* Main Content */
+.content {
+  padding: 20px;
+  background-color: #000000;
+}
+.content .welcome-box {
+  background-color: #4a90e2;
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  font-size: 18px;
+}
+.content .menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+.content .menu-item {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  text-decoration: none;
+  color: #ccc;
+  transition: 0.3s;
+}
+.content .menu-item:hover {
+  background-color: #007BFF;
+  color: #fff;
+}
+.calendar {
+  background-color: #1e1e1e;
+  padding: 20px;
+}
+
+/* Calendar */
+.calendar {
+  background: #1c1c1c;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.calendar .user {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.calendar .user img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.calendar .notification {
+  margin-bottom: 20px;
+}
+
+.calendar .cal-wrapper {
+  text-align: center;
+}
+
+.calendar .cal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar .cal-table td {
+  text-align: center;
+  padding: 10px;
+  color: #fff;
+}
+
+.calendar .cal-table .highlight {
+  background: #2d89ef;
+  border-radius: 50%;
+  color: #fff;
+}
