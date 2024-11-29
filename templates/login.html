@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>LOGIN</title>
+        <style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: black;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+            #input {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            input::placeholder {
+                color: wheat;
+            }
+            input {
+                height: 40px;
+                width: 300px;
+                background-color: dodgerblue;
+                border: 0px;
+                border-radius: 10px;
+                padding: 7px;
+                color: white;
+            }
+            [value="LOGIN"] {
+                width: 100px;
+                margin-left: 35%;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+            }
+            form {
+                font-weight: bold;
+                color: white;
+            }
+            h1 {
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="login">
+            <h1>UNIVERSITAS KATOLIK PARAHYANGAN</h1>
+            <br>
+            <div id="input">
+                <!-- Form login dengan validasi -->
+                <form id="loginForm" action="/login" method="POST">
+                    <p>Email</p>
+                    <input type="email" id="email" name="email" placeholder="email" required />
+                    <p>Password</p>
+                    <input type="password" id="password" name="password" placeholder="password" required />
+                    <p></p>
+                    <input type="submit" value="LOGIN">
+                </form>
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $('#loginForm').submit(function(event) {
+                    event.preventDefault();
+                    
+                    var email = $('#email').val();
+                    var password = $('#password').val();
+
+                    var data = {
+                        email: email,
+                        password: password
+                    };
+
+                    $.ajax({
+                        url: '/login',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function(response) {
+                            console.log(response['info'])
+                            if(response['info'] == 'found')
+                                window.location.href = '/home'
+                            else
+                                alert("Email dan password anda salah!")
+                        },
+                        error: function(xhr, status, error) {
+                            $('#errorMessage').text('Terjadi kesalahan saat mengirim data.').show();
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>
