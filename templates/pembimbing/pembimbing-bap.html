@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAP - Berita Acara Sidang</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pembimbing/bap.css') }}">
+    <script>
+        function selectMahasiswa(name, npm, topic, supervisor, examiners) {
+            const studentList = document.getElementById('student-list');
+            const bapContainer = document.querySelector('.bap-container');
+
+
+            studentList.style.display = 'none';
+            bapContainer.classList.add('active');
+        }
+
+        function backToStudentList() {
+            const studentList = document.getElementById('student-list');
+            const bapContainer = document.querySelector('.bap-container');
+
+            studentList.style.display = 'block';
+            bapContainer.classList.remove('active');
+        }
+
+        function agreeAction() {
+            alert("BAP disetujui!");
+        }
+    </script>
+</head>
+<body>
+    <div id="home">
+        <!-- sidebar -->
+        {% include 'pembimbing/fragment/sidebar.html' %}
+
+        <div id="main-side">
+            <div id="greeting">Berita Acara Sidang Skripsi</div>
+
+            <!-- Student List Section -->
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                <div class="student-item" onclick="selectMahasiswa('Jason Kelvin Agung', '6182201082','AI in Healthcare', 'Dr. Smith', 'Prof. Johnson')">Jason Kelvin Agung</div>
+                <div class="student-item" onclick="selectMahasiswa('Maria Clara', '6182201083','IoT Security', 'Dr. Brown', 'Prof. White')">Maria Clara</div>
+            </div>
+
+            <!-- BAP Content Section -->
+            <div class="bap-container">
+                <div class="content-header">
+                    <h2>BAP (Berita Acara Sidang)</h2>
+                </div>
+                <div class="bap-content">
+                    <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
+                    <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
+                    <button type="button" class="agree-btn" onclick="agreeAction()">Setuju</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- calender -->
+        {% include 'pembimbing/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>

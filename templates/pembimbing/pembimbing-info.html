@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Tugas Akhir</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pembimbing/infota.css') }}">
+
+    <script>
+        function showDetails(name, date, time, location, supervisor) {
+            const detailSection = document.querySelector('.detail-section');
+            detailSection.classList.add('active');
+            document.getElementById('student-name').textContent = name;
+            document.getElementById('execution-date').textContent = date;
+            document.getElementById('execution-time').textContent = time;
+            document.getElementById('execution-location').textContent = location;
+            document.getElementById('student-supervisor').textContent = supervisor;
+        }
+    </script>
+</head>
+<body>
+    <div id="home">
+        {% include 'pembimbing/fragment/sidebar.html' %}
+
+        <div id="main-side">
+            <div id="greeting">Info Sidang</div>
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                <div class="student-item" onclick="showDetails('Jason Kelvin Agung', '2024-12-10', '10:00 AM', 'Room 101', 'Dr. Smith')">
+                    6182201082 - Jason Kelvin Agung
+                </div>
+                <div class="student-item" onclick="showDetails('Maria Clara', '2024-12-12', '02:00 PM', 'Room 202', 'Dr. Brown')">
+                    6182201083 - Maria Clara
+                </div>
+            </div>
+
+            <!-- Detail Section -->
+            <div class="detail-section">
+                <h2>Detail Sidang</h2>
+                <div class="detail">Nama Mahasiswa: <span id="student-name"></span></div>
+                <div class="detail">Tanggal Pelaksanaan: <span id="execution-date"></span></div>
+                <div class="detail">Jam: <span id="execution-time"></span></div>
+                <div class="detail">Tempat Pelaksanaan: <span id="execution-location"></span></div>
+                <div class="detail">Pembimbing: <span id="student-supervisor"></span></div>
+            </div>
+        </div>
+        
+        <!-- calender -->
+        {% include 'pembimbing/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>

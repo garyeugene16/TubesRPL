@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catatan Sidang</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pembimbing/catatan.css') }}">
+
+    <script>
+        function showForm() {
+            document.getElementById('form-section').style.display = 'flex';
+        }
+
+        function showDetails(name, date, time, room, supervisor) {
+            showForm();
+            const title = document.getElementById('student-details');
+            title.innerHTML = `Catatan Sidang untuk ${name}`;
+        }
+    </script>
+</head>
+<body>
+    <div id="home">
+        <!-- Sidebar -->
+        {% include 'pembimbing/fragment/sidebar.html' %}
+
+        <!-- Main Content -->
+        <div id="main-side">
+            <div id="greeting">Catatan Sidang</div>
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                <div class="student-item" onclick="showDetails('Jason Kelvin Agung', '2024-12-10', '10:00 AM', 'Room 101', 'Dr. Smith')">
+                    6182201082 - Jason Kelvin Agung
+                </div>
+                <div class="student-item" onclick="showDetails('Maria Clara', '2024-12-12', '02:00 PM', 'Room 202', 'Dr. Brown')">
+                    6182201083 - Maria Clara
+                </div>
+            </div>
+
+            <!-- Form Section -->
+            <div id="form-section">
+                <h2 id="student-details"></h2>
+                <label for="catatan">Catatan Sidang:</label>
+                <textarea id="catatan" placeholder="Masukkan catatan sidang di sini"></textarea>
+                <button type="button">Simpan</button>
+            </div>
+        </div>
+
+        <!-- Right Side -->
+        {% include 'pembimbing/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>
