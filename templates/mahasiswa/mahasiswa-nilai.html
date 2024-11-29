@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidang Akhir</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-nilai.css') }}">
+
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'mahasiswa/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="content">
+      <header class="header">
+        <div class="welcome-box">
+          Nilai
+        </div>
+        <select>
+          <option>GANJIL 2024/2025</option>
+        </select>
+      </header>
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Mata Kuliah</th>
+            <th>SKS</th>
+            <th>Nilai</th>
+            <th>Angka Akhir</th>
+            <th>Nilai Akhir</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>AIF234001-03 Tugas Akhir 1</td>
+            <td>3</td>
+            <td><a class="links" href="#">Detail Nilai</a></td>
+            <td>80</td>
+            <td>A</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>AIF234002-06 Tugas Akhir 2</td>
+            <td>6</td>
+            <td><a class="links" href="#">Detail Nilai</a></td>
+            <td>80</td>
+            <td>A</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>AIF234101-03 Proyek IF</td>
+            <td>3</td>
+            <td><a class="links" href="#">Detail Nilai</a></td>
+            <td>80</td>
+            <td>A</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <!-- Rightbar Section -->
+    {% include 'mahasiswa/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

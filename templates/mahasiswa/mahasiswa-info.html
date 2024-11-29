@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-info.css') }}">
+
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'mahasiswa/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="welcome-box">
+          Info Sidang
+        </div>
+        <br>
+        <div class="info-details">
+          <table class="info-table">
+            <tr>
+                <td>Tanggal</td>
+                <td>:</td>
+                <td>15 Oktober 2024</td>
+            </tr>
+            <tr>
+                <td>Waktu</td>
+                <td>:</td>
+                <td>10.00 AM</td>
+            </tr>
+            <tr>
+                <td>Ruangan</td>
+                <td>:</td>
+                <td>AG2U.06.01.02</td>
+            </tr>
+            <tr>
+                <td>Pembimbing</td>
+                <td>:</td>
+                <td>Vania Natali</td>
+            </tr>
+            <tr>
+                <td>Penguji</td>
+                <td>:</td>
+                <td>Raymond Chandra</td>
+            </tr>
+        </table>
+        </div>
+    </div>
+
+    <!-- Rightbar Section -->
+    {% include 'mahasiswa/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

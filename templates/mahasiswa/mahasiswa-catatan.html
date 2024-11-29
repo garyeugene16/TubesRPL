@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-catatan.css') }}">
+
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'mahasiswa/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="content-header">
+        Catatan
+      </div>
+      <br>
+      <div class="notes">
+        <p><strong>Tanggal:</strong> 15 Oktober 2024</p>
+        <p><strong>Tempat:</strong> AG2U.06.01.02</p>
+        <p><strong>Catatan selama sidang:</strong></p>
+        <ul>
+          <li>Sudah lancar</li>
+          <li>Materi mendalam</li>
+          <li>Pasti lulus</li>
+        </ul>
+      </div>
+    </main>
+
+    <!-- Rightbar Section -->
+    {% include 'mahasiswa/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>
