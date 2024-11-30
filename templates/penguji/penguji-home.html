@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Penguji</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/penguji/penguji-home.css') }}">
+
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        {% include 'penguji/fragment/sidebar.html' %}
+
+        <!-- Main Content -->
+        <main class="content">
+            <div class="welcome-box">
+              <h2>Welcome back, {{role}}!</h2>
+              <p>1 Petrus 5:7</p>
+              <p>"Serahkanlah segala kekuatiranmu kepadaNya, sebab Ia yang memelihara kamu."</p>
+            </div>
+            <br><hr><br>
+            <div class="menu-grid">
+              <a href="info" class="menu-item">Info Tugas Akhir</a>
+              <a href="bap" class="menu-item">BAP</a>
+              <a href="nilai" class="menu-item">Input Nilai</a>
+            </div>
+        </main>
+
+        <!-- Right Side -->
+        <!-- Calendar Section -->
+        {% include 'penguji/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>
