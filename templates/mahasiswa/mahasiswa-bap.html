@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidang Akhir</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-bap.css') }}">
+
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'mahasiswa/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-header">
+            <h2>BAP (Berita Acara Sidang)</h2>
+        </div>
+        <div class="content-body">
+            <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
+            <div id="buttons">
+              <button class="btn-setuju" >Setuju</button>
+              <button class="btn-unduh" >Unduh</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rightbar Section -->
+    {% include 'mahasiswa/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

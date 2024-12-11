@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-catatan.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'mahasiswa/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="content">
+      <div class="content-header">
+        Catatan Sidang
+      </div>
+      <br>
+      <div class="notes">
+        {% if catatan %}
+          {% for note in catatan %}
+            <p><strong>Catatan:</strong></p>
+            <ul>
+              <li>{{ note.catatan }}</li>
+            </ul>
+          {% endfor %}
+        {% else %}
+          <p>Belum ada catatan untuk sidang ini.</p>
+        {% endif %}
+      </div>
+    </main>
+
+    <!-- Rightbar Section -->
+    {% include 'mahasiswa/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

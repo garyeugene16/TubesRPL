@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidang Akhir</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-nilai.css') }}">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'mahasiswa/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main class="content">
+      <header class="header">
+        <div class="welcome-box">
+          Nilai Sidang
+        </div>
+        <select>
+          <option>GANJIL 2024/2025</option>
+        </select>
+      </header>
+      
+      <!-- Tabel Nilai -->
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Detail Nilai</th>
+            <th>Nilai Penguji</th>
+            <th>Nilai Pembimbing</th>
+            <th>Total Nilai</th>
+            <th>Angka Akhir</th>
+            <th>Nilai Akhir</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Tata Tulis</td>
+            <td>{{ nilai_detail.nilai_tata_tulis_penguji }}</td>
+            <td>{{ nilai_detail.nilai_tata_tulis_pembimbing }}</td>
+            <td rowspan="5">{{ nilai_detail.total_nilai }}</td>
+            <td>{{ nilai_detail.total_nilai | round(0) }}</td> <!-- Angka Akhir, bisa menggunakan formula atau rounding -->
+            <td>
+              {% if nilai_detail.total_nilai >= 80 %}
+                A
+              {% elif 77 <= nilai_detail.total_nilai <= 79 %}
+                A-
+              {% elif 73 <= nilai_detail.total_nilai <= 76 %}
+                B+
+              {% elif 70 <= nilai_detail.total_nilai <= 72 %}
+                B
+              {% elif 67 <= nilai_detail.total_nilai <= 69 %}
+                B-
+              {% elif 63 <= nilai_detail.total_nilai <= 66 %}
+                C+
+              {% elif 60 <= nilai_detail.total_nilai <= 62 %}
+                C
+              {% elif 50 <= nilai_detail.total_nilai <= 59 %}
+                D
+              {% else %}
+                E
+              {% endif %}
+            </td>
+            
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Kelengkapan Materi</td>
+            <td>{{ nilai_detail.nilai_kelengkapan_materi_penguji }}</td>
+            <td>{{ nilai_detail.nilai_kelengkapan_materi_pembimbing }}</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Pencapaian Tujuan</td>
+            <td>{{ nilai_detail.nilai_pencapaian_tujuan_penguji }}</td>
+            <td>{{ nilai_detail.nilai_proses_bimbingan_pembimbing }}</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>Penguasaan Materi</td>
+            <td>{{ nilai_detail.nilai_penguasaan_materi_penguji }}</td>
+            <td>{{ nilai_detail.nilai_penguasaan_materi_pembimbing }}</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>Presentasi</td>
+            <td>{{ nilai_detail.nilai_presentasi_penguji }}</td>
+            <td></td> <!-- Pembimbing tidak ada nilai presentasi -->
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <!-- Rightbar Section -->
+    {% include 'mahasiswa/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>
