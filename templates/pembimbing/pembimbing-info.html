@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Tugas Akhir</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pembimbing/infota.css') }}">
+
+    <script>
+        function showDetails(name, date, time, location, supervisor) {
+            const detailSection = document.querySelector('.detail-section');
+            detailSection.classList.add('active');
+            document.getElementById('student-name').textContent = name;
+            document.getElementById('execution-date').textContent = date;
+            document.getElementById('execution-time').textContent = time;
+            document.getElementById('execution-location').textContent = location;
+            document.getElementById('student-supervisor').textContent = supervisor;
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          const today = new Date();
+          const currentMonth = today.getMonth(); // Desember = 11
+          const currentYear = today.getFullYear();
+          const currentDate = today.getDate();
+  
+          // Pastikan bulan dan tahun adalah Desember 2024
+          if (currentMonth === 11 && currentYear === 2024) {
+              // Cari elemen <td> dengan data-day yang sesuai
+              const todayCell = document.querySelector(`td[data-day='${currentDate}']`);
+              if (todayCell) {
+                  todayCell.classList.add('current-day');
+              }
+          }
+      });
+    </script>
+</head>
+<body>
+    <div id="home">
+        {% include 'pembimbing/fragment/sidebar.html' %}
+
+        <div id="main-side">
+            <div id="greeting"><strong>Info Sidang</strong></div>
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                {% for sidang in info %}
+                <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="showDetails('{{sidang.nama_mahasiswa}}', '{{sidang.tanggal_sidang}}', '{{sidang.waktu_mulai}}', '{{sidang.waktu_selesai}}', '{{sidang.nama_pembimbing}}')">
+                    {{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Detail Section -->
+            <div class="detail-section">
+                <h2>Detail Sidang</h2>
+                <div class="detail">Nama Mahasiswa: <span id="student-name"></span></div>
+                <div class="detail">Tanggal Pelaksanaan: <span id="execution-date"></span></div>
+                <div class="detail">Jam: <span id="execution-time"></span></div>
+                <div class="detail">Tempat Pelaksanaan: <span id="execution-location"></span></div>
+                <div class="detail">Pembimbing: <span id="student-supervisor"></span></div>
+            </div>
+        </div>
+        
+        <!-- calender -->
+        {% include 'pembimbing/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>

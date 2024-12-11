@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Nilai - Sidang Akhir</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pembimbing/inputnilai.css') }}">
+
+    <script>
+        function selectMahasiswa(name, npm, id_sidang) {
+            const studentList = document.getElementById('student-list');
+            const inputNilaiContainer = document.querySelector('.input-nilai-container');
+
+            document.getElementById('student-name').textContent = name;
+            document.getElementById('student-npm').textContent = npm;
+
+
+            studentList.style.display = 'none';
+            inputNilaiContainer.classList.add('active');
+
+            fetch('/pembimbing/nilai', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ npm: npm, id_sidang: id_sidang }),
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log('Response from server:', data);
+                    if(data.length != 0){
+                        document.getElementById('tata_tulis').placeholder = data[0]['tata_tulis'];
+                        document.getElementById('kelengkapan_materi').placeholder = data[0]['kelengkapan_materi'];
+                        document.getElementById('proses_bimbingan').placeholder = data[0]['proses_bimbingan'];
+                        document.getElementById('penguasaan_materi').placeholder = data[0]['penguasaan_materi'];
+                    }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                  });
+              };
+
+        function backToStudentList() {
+            const studentList = document.getElementById('student-list');
+            const inputNilaiContainer = document.querySelector('.input-nilai-container');
+
+            studentList.style.display = 'block';
+            inputNilaiContainer.classList.remove('active');
+        }
+        function done() {
+            alert("Nilai mahasiswa sudah diperbarui");
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          const today = new Date();
+          const currentMonth = today.getMonth(); // Desember = 11
+          const currentYear = today.getFullYear();
+          const currentDate = today.getDate();
+  
+          // Pastikan bulan dan tahun adalah Desember 2024
+          if (currentMonth === 11 && currentYear === 2024) {
+              // Cari elemen <td> dengan data-day yang sesuai
+              const todayCell = document.querySelector(`td[data-day='${currentDate}']`);
+              if (todayCell) {
+                  todayCell.classList.add('current-day');
+              }
+          }
+      });
+    </script>
+</head>
+<body>
+    <div id="home">
+        {% include 'pembimbing/fragment/sidebar.html' %}
+
+        <div id="main-side">
+            <div id="greeting"><strong>Input Nilai Sidang</strong></div>
+
+            <!-- Student List Section -->
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                {% for sidang in info %}
+                <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.npm_mahasiswa}}', '{{sidang.ID_Sidang}}')">{{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}</div>
+                {% endfor %}
+                <!-- dummy untuk ngecek -->
+                <!-- <div class="student-item" id="3" onclick="selectMahasiswa('a', '11', '32')">a</div>
+                <div class="student-item" id="4" onclick="selectMahasiswa('b', '22', '22')">b</div>
+                <div class="student-item" id="5" onclick="selectMahasiswa('c', '33', '22')">c</div>
+                <div class="student-item" id="6" onclick="selectMahasiswa('d', '44', '21')">d</div> -->
+            </div>
+
+            <!-- Input Nilai Section -->
+            <div class="input-nilai-container">
+                <!-- <h2>Atur Nilai Mahasiswa</h2> -->
+                
+                <p><strong>Nama Mahasiswa:</strong> <span id="student-name">{{info.nama_mahasiswa}}</span></p>
+                <p><strong>NPM:</strong> <span id="student-npm">{{info.npm_mahasiswa}}</span></p>
+                <hr>
+                <form class="input-form" method="post">
+                    <label for="tata_tulis">Tata Tulis:</label>
+                    <input type="number" id="tata_tulis" name="tata_tulis" min="0" max="100" required>
+                    
+                    <label for="kelengkapan_materi">Kelengkapan Materi:</label>
+                    <input type="number" id="kelengkapan_materi" name="kelengkapan_materi" min="0" max="100" required>
+
+                    <label for="proses_bimbingan">Proses Bimbingan:</label>
+                    <input type="number" id="proses_bimbingan" name="proses_bimbingan" min="0" max="100" required>
+                    
+                    <label for="penguasaan_materi">Penguasaan Materi:</label>
+                    <input type="number" id="penguasaan_materi" name="penguasaan_materi" min="0" max="100" required>
+
+                    <div class="buttons">
+                        <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
+                        <button type="submit" class="submit-btn" onclick="done()">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- rightbar -->
+        {% include 'pembimbing/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>
