@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-atur.css') }}">
+  <script>
+        function selectMahasiswa(name, title, examiners, examiners2,tanggal, mulai, selesai, tempat, id_sidang) {
+            const studentList = document.getElementById('student-list');
+            const formContainer = document.querySelector('.form-container');
+            document.getElementById('student-name').textContent = name;
+            document.getElementById('thesis-title').textContent = title;
+            document.getElementById('examiners').textContent = examiners + ", " + examiners2
+            studentList.style.display = 'none';  
+            formContainer.classList.add('active');  
+
+            console.log(selesai)
+            console.log(tempat)
+
+            document.getElementById('jadwal').value = tanggal
+            document.getElementById('waktu-mulai').value = mulai
+            document.getElementById('waktu-selesai').value = selesai
+            document.getElementById('tempat').value = tempat
+
+            fetch('/koordinator/pengaturan_waktu_dan_lokasi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id_sidang: id_sidang
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response from server:', data);
+                    if (data.length != 0) {
+
+                        document.getElementById('jadwal').placeholder = data[0]['jadwal'];
+                        document.getElementById('waktu').placeholder = data[0]['waktu'];
+                        document.getElementById('tempat').placeholder = data[0]['tempat'];
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+              
+        }
+
+        function cancelScheduleForm() {
+            const studentList = document.getElementById('student-list');
+            const formContainer = document.querySelector('.form-container');
+            studentList.style.display = 'block';  
+            formContainer.classList.remove('active'); 
+        }
+
+        function submitScheduleForm() {
+            alert("Jadwal berhasil diatur!");
+            cancelScheduleForm();  
+        }
+    </script>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'koordinator/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div id="main-side">
+        <div id="greeting">
+            <h2>Atur Waktu dan Lokasi</h2></div>
+        <br>
+        <!-- Student List Section -->
+        <div id="student-list">
+            <h2>Pilih Mahasiswa</h2>
+            {% for sidang in info %}
+            <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.judul_ta}}', '{{sidang.nama_penguji}}', '{{sidang.nama_penguji2}}', '{{sidang.tanggal_sidang}}', '{{sidang.waktu_mulai}}', '{{sidang.waktu_selesai}}', '{{sidang.tempat_sidang}}',  '{{sidang.ID_Sidang}}')">
+                {{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}
+            </div>
+            {% endfor %}
+        </div>
+        <br>
+        <!-- Form Section -->
+        <div class="form-container">
+            <h2>Atur Jadwal dan Lokasi</h2>
+            <p>Nama Mahasiswa: <span id="student-name"></span></p>
+            <p>Judul: <span id="thesis-title"></span></p>
+            <p>Penguji: <span id="examiners"></span></p>
+            <form method="post">
+                <label for="jadwal">Tanggal</label>
+                <input type="date" id="jadwal" name="tanggal">
+                <label for="waktu-mulai">Waktu Mulai</label>
+                <input type="time" id="waktu-mulai" name="mulai">
+                <label for="waktu-selesai">Waktu Selesai</label>
+                <input type="time" id="waktu-selesai" name="selesai">
+                <label for="tempat">Tempat</label>
+                <input type="text" id="tempat" placeholder="Enter location" name="tempat">
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" onclick="cancelScheduleForm()">Cancel</button>
+                    <button type="submit" class="ok-btn">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <!-- Rightbar Section -->
+    {% include 'koordinator/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

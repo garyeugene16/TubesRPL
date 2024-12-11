@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-home.css') }}">
+
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'koordinator/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <main id="main-side">
+        <div id="greeting">
+            <h2>Welcome back, {{role}}!</h2>
+            <p>1 Petrus 5:7</p>
+            <p>"Serahkanlah segala kekuatiranmu kepadaNya, sebab Ia yang memelihara kamu."</p>
+        </div>
+        <br><hr><br>
+        <div id="content">
+            <div class="card" onclick="location.href='info'">
+                <p>Info Tugas Akhir</p>
+                <!-- <p>Lihat informasi terkini mengenai tugas akhir mahasiswa.</p> -->
+            </div>
+            <div class="card" onclick="location.href='pengaturan_waktu_dan_lokasi'">
+                <p>Atur Waktu dan Lokasi</p>
+                <!-- <p>Atur jadwal dan lokasi sidang tugas akhir.</p> -->
+            </div>
+            <div class="card" onclick="location.href='pengaturan_nilai'">
+                <p>Pengaturan Bobot Nilai</p>
+                <!-- <p>Kelola bobot nilai untuk sidang tugas akhir.</p> -->
+            </div>
+            <div class="card" onclick="location.href='bap'">
+                <p>BAP</p>
+                <!-- <p>Lihat dan kelola Berita Acara Sidang (BAP).</p> -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Rightbar Section -->
+    {% include 'koordinator/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

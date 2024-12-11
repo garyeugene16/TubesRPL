@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Catatan Sidang</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-info.css') }}">
+    </head>
+    <body>
+        <div class="container">
+            <!-- Sidebar -->
+            {% include 'koordinator/fragment/sidebar.html' %}
+
+            <!-- Main Content -->
+            <div id="main-side">
+                <div id="greeting"><h2>Info Tugas Akhir</h2></div>
+                <br>
+
+                <button id="tambah-sidang-btn" onclick="toggleTambahSidang()">Tambah Sidang</button>
+
+                <div class="tambah-sidang-form" id="tambahSidangForm">
+                    <h2>Tambah Sidang</h2>
+                    <form method="POST" action="{{ url_for('koordinator.tambah_sidang') }}"> 
+                      <label for="tambah-mahasiswa">Mahasiswa:</label>
+                      <select id="tambah-mahasiswa" name="mahasiswa" required>
+                        <option value="" disabled selected>Pilih Mahasiswa</option>
+                        {% for mahasiswa in mahasiswa_list %} 
+                        <option value="{{mahasiswa.npm}}">{{mahasiswa.nama}}</option>
+                        {% endfor %}
+                      </select>
+            
+                      <label for="tambah-judul">Judul:</label>
+                      <input type="text" id="tambah-judul" name="judul" placeholder="Judul Tugas Akhir" required>
+
+                      <!-- <label for="tambah-nilai">Judul:</label>
+                      <input type="text" id="tambah-nilai" name="nilai_total" placeholder="Nilai Akhir" required> -->
+
+                      <label for="tambah-tahun-ajaran">Tahun Ajaran:</label>
+                        <input type="text" id="tambah-tahun-ajaran" name="id_tahun_ajaran" required>    
+            
+                      <label for="tambah-penguji">Penguji:</label>
+                      <div class="select1">
+                        <select class="pilih-penguji" name="penguji1" id="tambah-penguji1" required>
+                          <option value="" disabled selected>Penguji 1</option>
+                          {% for info in penguji %}
+                          <option id="{{info.nik}}" value="{{info.nik}}">{{info.nama}}</option>
+                          {% endfor %}
+                        </select>
+                        <select class="pilih-penguji" name="penguji2" id="tambah-penguji2" required>
+                          <option value="" disabled selected>Penguji 2</option>
+                          {% for info in penguji %}
+                          <option id="{{info.nik}}" value="{{info.nik}}">{{info.nama}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+            
+                      <label for="tambah-pembimbing">Pembimbing:</label>
+                      <div class="select2">
+                        <select class="pilih-penguji" name="pembimbing" id="tambah-pembimbing" required>
+                          <option value="" disabled selected>Pembimbing</option>
+                          {% for info in pembimbing %}
+                          <option id="{{info.nik}}" value="{{info.nik}}">{{info.nama}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+            
+                      <label for="tambah-jenis">Jenis TA:</label>
+                      <input type="text" id="tambah-jenis" name="jenis" placeholder="Jenis Tugas Akhir" required>
+            
+                      <label for="tambah-tempat">Tempat:</label>
+                      <input type="text" id="tambah-tempat" name="tempat" placeholder="Tempat Sidang" required>
+            
+                      <label for="tambah-tanggal">Tanggal:</label>
+                      <input type="date" id="tambah-tanggal" name="tanggal" required>
+            
+                      <label for="tambah-waktu-mulai">Waktu Mulai:</label>
+                      <input type="time" id="tambah-waktu-mulai" name="waktu_mulai" required>
+            
+                      <label for="tambah-waktu-selesai">Waktu Selesai:</label>
+                      <input type="time" id="tambah-waktu-selesai" name="waktu_selesai" required>
+            
+                      <div class="buttons">
+                        <button type="submit">Simpan</button> 
+                        <button type="button" onclick="cancelTambahSidang()">Cancel</button>
+                      </div>
+                    </form>
+                  </div>
+
+                <br>
+                <div id="student-list">
+                    <h2>Pilih Mahasiswa</h2>
+                    {% for sidang in info %}
+                    <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="showDetails('{{sidang.nik_penguji}}','{{sidang.nik_penguji2}}','{{sidang.nik_pembimbing}}', '{{sidang.npm_mahasiswa}}', '{{sidang.nama_mahasiswa}}', '{{sidang.judul_ta}}', '{{sidang.nama_penguji}}', '{{sidang.nama_penguji2}}','{{sidang.nama_pembimbing}}','{{sidang.jenis_ta}}', '{{sidang.tempat_sidang}}','{{sidang.tanggal_sidang}}','{{sidang.waktu_mulai}}', '{{sidang.waktu_selesai}}','{{sidang.ID_Sidang}}')">
+                        {{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}
+                    </div>
+                    {% endfor %}
+                </div>
+                <br>
+                <div class="detail-section">
+                    <h2>Detail Mahasiswa</h2>
+                    <div class="detail">Nama Mahasiswa: <span id="student-name"></span></div>
+                    <div class="detail">Judul: <span id="student-title"></span></div>
+                    <div class="detail">Penguji: <span id="student-examiner"></span></div>
+                    <div class="detail">Pembimbing: <span id="student-supervisor"></span></div>
+                    <div class="detail">Jenis TA: <span id="student-type"></span></div>
+                    <div class="detail">Tempat: <span id="student-place"></span></div>
+                    <div class="detail">Tanggal: <span id="student-date"></span></div>
+                    <div class="detail">Waktu Mulai - Selesai: <span id="student-time"></span></div>
+
+                    <div class="buttons">
+                        <button class="edit-btn" onclick="goToEditPage()">Edit</button>
+                    </div>
+                </div>
+                <br>
+                <div class="edit-form">
+                    <h2 id="editMahasiswa">Edit </h2>
+                    <form method="post">
+                        <label for="edit-title">Judul</label>
+                        <input type="text" id="edit-title" name="judul_ta" placeholder="Judul Tugas Akhir" required>
+                        <label for="edit-examiner">Penguji</label>
+                        <div class="select1">
+                            <select class="pilih-penguji" name="penguji1" id="penguji1" required>
+                                <option value="" disabled selected>Penguji 1</option>
+                                {% for info in penguji %}
+                                <option id="{{info.nik}}" value="{{info.nik}}">{{info.nama}}</option>
+                                {% endfor %}
+                            </select>
+                            <select class="pilih-penguji" name="penguji2" id="penguji2" required>
+                                <option value="" disabled selected>Penguji 2</option>
+                                {% for info in penguji %}
+                                <option id="{{info.nik}}" value="{{info.nik}}">{{info.nama}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <label for="edit-supervisor">Pembimbing</label>
+                        <div class="select2">
+                            <select class="pilih-penguji" name="pembimbing1" id="pembimbing1" required>
+                                <option value="" disabled selected>Pembimbing</option>
+                                {% for info in pembimbing %}
+                                <option id="{{info.nik}}" value="{{info.nik}}">{{info.nama}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <label for="edit-type">Jenis TA</label>
+                        <input type="text" id="edit-type" name="jenis_ta" placeholder="Jenis Tugas Akhir" required>
+                        <div class="buttons">
+                            <button type="submit" class="ok-btn">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% include 'koordinator/fragment/rightbar.html' %}
+        </div>
+        <script>
+            document.getElementById('penguji1').addEventListener('change', () => {
+                const penguji1 = document.getElementById('penguji1');
+                const penguji2 = document.getElementById('penguji2');
+
+                const selectedOption = penguji1.value;
+                const selectedOption2 = penguji2.value;
+                if(selectedOption == selectedOption2){
+                    penguji2.value = "";
+                }
+                console.log(selectedOption)
+                Array.from(penguji2.options).forEach(option => {
+                    option.style.display = '';
+                });
+            });
+
+            document.getElementById('penguji2').addEventListener('change', () => {
+                const penguji1 = document.getElementById('penguji1');
+                const penguji2 = document.getElementById('penguji2');
+
+                const selectedOption = penguji1.value;
+                const selectedOption2 = penguji2.value;
+                if(selectedOption == selectedOption2){
+                    penguji1.value = "";
+                }
+                console.log(selectedOption)
+                Array.from(penguji2.options).forEach(option => {
+                    option.style.display = '';
+                });
+            });
+
+
+            function showDetails(nik_penguji1,nik_penguji2,nik_pembimbing,npm, name, title, examiner, examiner2, supervisor, type, place, date, start,end, id_sidang) {
+                const detailSection = document.querySelector('.detail-section');
+                const editForm = document.querySelector('.edit-form');
+                editForm.classList.remove('active');
+                detailSection.classList.add('active');
+                document.getElementById('student-name').textContent = name;
+                document.getElementById('student-title').textContent = title;
+                document.getElementById('student-examiner').textContent = examiner + ", " + examiner2;
+                document.getElementById('student-supervisor').textContent = supervisor;
+                document.getElementById('student-type').textContent = type;
+                document.getElementById('student-place').textContent = place;
+                document.getElementById('student-date').textContent = date;
+                document.getElementById('student-time').textContent = start + " - " + end;
+                document.getElementById('editMahasiswa').textContent = 'Edit ' + name;
+
+                console.log("nik penguji1: " + nik_penguji1);
+                console.log("nik penguji2: " + nik_penguji2);
+                console.log("nik pembimbing: " + nik_pembimbing);
+                document.getElementById('edit-title').value = title;
+                document.getElementById('penguji1').value = nik_penguji1;
+                document.getElementById('penguji2').value = nik_penguji2;
+                document.getElementById('pembimbing1').value = nik_pembimbing;
+                document.getElementById('edit-type').value = type;  
+                detailSection.style.display = 'block'; 
+                fetch('/koordinator/info', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({npm: npm, id_sidang: id_sidang}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    console.log('Response from server:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+
+            function goToEditPage() {
+                const detailSection = document.querySelector('.detail-section');
+                detailSection.classList.remove('active');
+                const editForm = document.querySelector('.edit-form');
+                editForm.classList.add('active');
+            }
+
+            function hideDetails() {
+                const detailSection = document.querySelector('.detail-section');
+                detailSection.classList.remove('active');
+            }
+
+            function toggleTambahSidang() {
+                const form = document.getElementById('tambahSidangForm');
+                const studentList = document.getElementById('student-list');
+                
+                form.classList.toggle('active');
+                studentList.style.display = form.classList.contains('active') ? 'none' : 'block';
+            }
+
+            function submitTambahSidang() {
+                alert('Sidang baru berhasil ditambahkan!');
+                const form = document.getElementById('tambahSidangForm');
+                const studentList = document.getElementById('student-list');
+                
+                form.classList.remove('active');
+                studentList.style.display = 'block';
+            }
+
+            function cancelTambahSidang() {
+                const form = document.getElementById('tambahSidangForm');
+                const studentList = document.getElementById('student-list');
+                
+                form.classList.remove('active');
+                studentList.style.display = 'block';
+            }
+
+            document.getElementById('tambah-penguji1').addEventListener('change', () => {
+                const penguji1 = document.getElementById('tambah-penguji1');
+                const penguji2 = document.getElementById('tambah-penguji2');
+
+                const selectedOption = penguji1.value;
+                const selectedOption2 = penguji2.value;
+                if (selectedOption == selectedOption2) {
+                    penguji2.value = "";
+                }
+                Array.from(penguji2.options).forEach(option => {
+                    option.style.display = '';
+                });
+            });
+
+            document.getElementById('tambah-penguji2').addEventListener('change', () => {
+                const penguji1 = document.getElementById('tambah-penguji1');
+                const penguji2 = document.getElementById('tambah-penguji2');
+
+                const selectedOption = penguji1.value;
+                const selectedOption2 = penguji2.value;
+                if (selectedOption == selectedOption2) {
+                    penguji1.value = "";
+                }
+                Array.from(penguji2.options).forEach(option => {
+                    option.style.display = '';
+                });
+            });
+        </script>
+
+        {% if success %}
+        <script>alert("Berhasil memperbaharui data sidang")</script>
+        {% endif %}
+    </body>
+</html>
