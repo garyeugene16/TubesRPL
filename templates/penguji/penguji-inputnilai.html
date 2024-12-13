@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Nilai - Sidang Akhir</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/penguji/penguji-inputnilai.css') }}">
+
+    <script>
+        function selectMahasiswa(name, npm, id_sidang) {
+            const studentList = document.getElementById('student-list');
+            const inputNilaiContainer = document.querySelector('.input-nilai-container');
+
+            document.getElementById('student-name').textContent = name;
+            document.getElementById('student-npm').textContent = npm;
+
+
+            studentList.style.display = 'none';
+            inputNilaiContainer.classList.add('active');
+
+            fetch('/penguji/nilai', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ npm: npm, id_sidang: id_sidang }),
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log('Response from server:', data);
+                    if(data.length != 0){
+                        document.getElementById('tata_tulis').placeholder = data[0]['tata_tulis'];
+                        document.getElementById('kelengkapan_materi').placeholder = data[0]['kelengkapan_materi'];
+                        document.getElementById('pencapaian_tujuan').placeholder = data[0]['pencapaian_tujuan'];
+                        document.getElementById('penguasaan_materi').placeholder = data[0]['penguasaan_materi'];
+                        document.getElementById('presentasi').placeholder = data[0]['presentasi'];
+                    }
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                  });
+              };
+
+        function backToStudentList() {
+            const studentList = document.getElementById('student-list');
+            const inputNilaiContainer = document.querySelector('.input-nilai-container');
+
+            studentList.style.display = 'block';
+            inputNilaiContainer.classList.remove('active');
+        }
+    </script>
+</head>
+<body>
+    <div id="home">
+        {% include 'penguji/fragment/sidebar.html' %}
+
+        <div id="main-side">
+            <div id="greeting">Input Nilai Sidang</div>
+
+            <!-- Student List Section -->
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                {% for sidang in info %}
+                <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.npm_mahasiswa}}', '{{sidang.ID_Sidang}}')">{{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}</div>
+                {% endfor %}
+                <!-- dummy untuk ngecek -->
+                <!-- <div class="student-item" id="3" onclick="selectMahasiswa('a', '11', '32')">a</div>
+                <div class="student-item" id="4" onclick="selectMahasiswa('b', '22', '22')">b</div>
+                <div class="student-item" id="5" onclick="selectMahasiswa('c', '33', '22')">c</div>
+                <div class="student-item" id="6" onclick="selectMahasiswa('d', '44', '21')">d</div> -->
+            </div>
+
+            <!-- Input Nilai Section -->
+            <div class="input-nilai-container">
+                <h2>Input Nilai</h2>
+                <hr>
+                <p><strong>Nama Mahasiswa:</strong> <span id="student-name">{{info.nama_mahasiswa}}</span></p>
+                <p><strong>NPM:</strong> <span id="student-npm">{{info.npm_mahasiswa}}</span></p>
+                <form class="input-form" method="post">
+                    <label for="tata_tulis">Tata Tulis:</label>
+                    <input type="number" id="tata_tulis" name="tata_tulis" min="0" max="100" required>
+                    
+                    <label for="kelengkapan_materi">Kelengkapan Materi:</label>
+                    <input type="number" id="kelengkapan_materi" name="kelengkapan_materi" min="0" max="100" required>
+
+                    <label for="pencapaian_tujuan">Pencapaian Tujuan:</label>
+                    <input type="number" id="pencapaian_tujuan" name="pencapaian_tujuan" min="0" max="100" required>
+                    
+                    <label for="penguasaan_materi">Penguasaan Materi:</label>
+                    <input type="number" id="penguasaan_materi" name="penguasaan_materi" min="0" max="100" required>
+
+                    <label for="presentasi">Presentasi:</label>
+                    <input type="number" id="presentasi" name="presentasi" min="0" max="100" required>
+
+                    <div class="buttons">
+                        <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
+                        <button type="submit" class="submit-btn">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- rightbar -->
+        {% include 'penguji/fragment/rightbar.html' %}
+    </div>
+</body>
+</html>
