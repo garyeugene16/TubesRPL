@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-pengaturan.css') }}">
+
+  <script>
+    function goToEditBobot(bobot_koor, bobot_uji, bobot_bimbing, id_tahun_ajaran) {
+        const bobotList = document.getElementById('bobot-list');
+        const editForm = document.querySelector('.edit-form');
+        const inputNilai = document.querySelector('#input-nilai');
+        const koor = document.querySelector('#koordinator');
+        const uji = document.querySelector('#penguji');
+        const tahun_ajaran = document.querySelector('#tahun-ajaran');
+        const bimbing = document.querySelector('#pembimbing');
+        koor.placeholder = bobot_koor;
+        uji.placeholder = bobot_uji;
+        bimbing.placeholder = bobot_bimbing;
+        tahun_ajaran.value = id_tahun_ajaran;
+        bobotList.style.display = 'none';  
+        editForm.classList.add('active');  
+        inputNilai.style.display = 'none';
+    }
+
+    function goToEditBobotPenguji(id_tahun, tata_tulis, kelengkapan_materi, pencapaian_tujuan, penguasaan_materi, presentasi) {
+        const bobotList = document.getElementById('bobot-list');
+        const editKoor = document.querySelector('.edit-koordinator');
+        const editPenguji1 = document.querySelector('.edit-penguji1');
+        const editPenguji2 = document.querySelector('.edit-penguji2');
+        const editPembimbing = document.querySelector('.edit-pembimbing');
+        const inputNilai = document.querySelector('#input-nilai');
+        inputNilai.style.display = 'none';
+        bobotList.style.display = 'none';
+        editPenguji1.classList.add('active');
+
+        document.getElementById("tata-tulis").value = tata_tulis
+        document.getElementById("kelengkapan-materi").value = kelengkapan_materi
+        document.getElementById("pencapaian-tujuan").value = pencapaian_tujuan
+        document.getElementById("penguasaan-materi").value = penguasaan_materi
+        document.getElementById("presentasi").value = presentasi
+
+    }
+
+    function goToEditBobotPembimbing(id_tahun, tata_tulis, kelengkapan_materi, proses_bimbingan, penguasaan_materi) {
+        const bobotList = document.getElementById('bobot-list');
+        const editKoor = document.querySelector('.edit-koordinator');
+        const editPenguji1 = document.querySelector('.edit-penguji1');
+        const editPenguji2 = document.querySelector('.edit-penguji2');
+        const editPembimbing = document.querySelector('.edit-pembimbing');
+        const inputNilai = document.querySelector('#input-nilai');
+        inputNilai.style.display = 'none';
+        bobotList.style.display = 'none';
+        editPembimbing.classList.add('active');  
+
+        document.getElementById("tata-tulis-p").value = tata_tulis
+        document.getElementById("kelengkapan-materi-p").value = kelengkapan_materi
+        document.getElementById("proses-bimbingan-p").value = proses_bimbingan
+        document.getElementById("penguasaan-materi-p").value = penguasaan_materi
+
+    }
+
+    function goToEditNilai(nik_koor,id_sidang, nilai, npm, nama) {
+        const bobotList = document.getElementById('bobot-list');
+        const editKoor = document.querySelector('.edit-koordinator');
+        const editPenguji1 = document.querySelector('.edit-penguji1');
+        const editPenguji2 = document.querySelector('.edit-penguji2');
+        const editPembimbing = document.querySelector('.edit-pembimbing');
+        const inputNilai = document.querySelector('#input-nilai');
+        const titleNilai = document.querySelector('#titleNilai');
+        const nilais = document.querySelector('#nilai');
+        titleNilai.textContent = npm + " - " + nama;
+        nilais.placeholder = nilai;
+        bobotList.style.display = 'none';
+        editKoor.classList.add('active');
+        inputNilai.style.display = 'none';
+
+        fetch('/koordinator/pengaturan_nilai', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({nik: nik_koor, id_sidang: id_sidang}),
+            })  
+            .then(response => response.json())
+            .then(data => {
+            console.log('Response from server:', data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+        });
+        
+    }
+
+    function submitEditBobotForm() {
+        alert("Bobot Nilai berhasil diperbarui!");
+        const bobotList = document.getElementById('bobot-list');
+        const editForm = document.querySelector('.edit-form');
+        bobotList.style.display = 'block';  
+        editForm.classList.remove('active');  
+    }
+
+    function cekTahunAjaran(){
+        select = document.getElementById("tahun-ajaran");
+        value = select.value;
+        console.log(value)
+
+        koor = document.getElementById("koordinator")
+        penguji = document.getElementById("penguji")
+        pembimbing = document.getElementById("pembimbing")
+
+        fetch('/koordinator/pengaturan_nilai', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({id_tahun: value}),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                    console.log('Response from server:', data);
+                    if(data.length != 0){
+                        console.log(data[0])
+                        koor.value = data[0]['bobot_koordinator'] * 100;
+                        penguji.value = data[0]['bobot_penguji'] * 100;
+                        pembimbing.value = data[0]['bobot_pembimbing'] * 100;
+                        koor.readOnly = true;
+                        penguji.readOnly = true;
+                        pembimbing.readOnly = true;
+                    }
+                    else{
+                        koor.value = 0
+                        penguji.value = 0
+                        pembimbing.value = 0
+                        koor.readOnly = false;
+                        penguji.readOnly = false;
+                        pembimbing.readOnly = false;
+                    }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+    }
+
+    function cancelEditBobotForm() {
+        const bobotList = document.getElementById('bobot-list');
+        const editForm = document.querySelector('.edit-form');
+        const editKoor = document.querySelector('.edit-koordinator');
+        const editPenguji1 = document.querySelector('.edit-penguji1');
+        const editPenguji2 = document.querySelector('.edit-penguji2');
+        const editPembimbing = document.querySelector('.edit-pembimbing');
+        const inputNilai = document.querySelector('#input-nilai');
+        bobotList.style.display = 'block';  
+        inputNilai.style.display = 'block'
+        editForm.classList.remove('active');
+        editPenguji1.classList.remove('active'); 
+        editPenguji2.classList.remove('active'); 
+        editPembimbing.classList.remove('active');
+        editKoor.classList.remove('active');
+
+
+           
+    }
+</script>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'koordinator/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div id="main-side">
+        <div id="greeting"><h2>Pengaturan Nilai</h2></div>
+        <br>
+        <div id="bobot-list">
+            <h2>Detail Bobot Nilai</h2>
+            <a><div class="bobot-item-koor">Dosen Koordinator: {{bobot[0].bobot_koordinator}}%</div></a>
+            <a onclick="goToEditBobotPenguji('{{bobot[0].id_tahun_ajaran}}', '{{bobot[0].tata_tulis_penguji}}', '{{bobot[0].kelengkapan_materi_penguji}}', '{{bobot[0].pencapaian_tujuan_penguji}}', '{{bobot[0].penguasaan_materi_penguji}}', '{{bobot[0].presentasi_penguji}}')"><div class="bobot-item">Dosen Penguji 1 dan 2: {{bobot[0].bobot_penguji}}% ({{bobot[0].bobot_penguji / 2}}% + {{bobot[0].bobot_penguji / 2}}%)</div></a>
+            <!-- <a onclick="goToEditBobotRole(3)"><div class="bobot-item">Anggota Dosen Penguji: 30%</div></a> -->
+            <a onclick="goToEditBobotPembimbing('{{bobot[0].id_tahun_ajaran}}', '{{bobot[0].tata_tulis_pembimbing}}', '{{bobot[0].kelengkapan_materi_pembimbing}}', '{{bobot[0].proses_bimbingan_pembimbing}}', '{{bobot[0].penguasaan_materi_pembimbing}}',)"><div class="bobot-item"> Dosen Pembimbing: {{bobot[0].bobot_pembimbing}}%</div></a>
+            <br>
+            <div class="buttons"><button class="edit-btn" onclick="goToEditBobot('{{bobot[0].bobot_koordinator}}', '{{bobot[0].bobot_penguji}}', '{{bobot[0].bobot_pembimbing}}')">Edit</button></div>
+        </div>
+        <br><br>
+        <div id="input-nilai">
+            <h2>Input Nilai Sidang</h2>
+            {% for sidang in info %}
+            <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="goToEditNilai('{{nik}}', '{{sidang.id_sidang}}', '{% if sidang.nilai_koor != None %} {{sidang.nilai_koor}} {% else %} 100 {% endif %}', '{{sidang.npm_mahasiswa}}', '{{sidang.nama_mahasiswa}}', '{{sidang.ID_Tahun_Ajaran}}')">
+                {{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Edit Bobot Form Section -->
+        <div class="edit-form">
+            <h2>Edit Bobot Nilai</h2>
+            <form method = "post">
+                <label for="tahun-ajaran">Tahun Ajaran</label>
+                <select onchange="cekTahunAjaran()" id="tahun-ajaran" name="tahun-ajaran">
+                    <option id="0" value="0">Tahun Ajaran Baru</option>
+                    {% for tahun in bobots %}
+                    <option id="{{tahun.id_tahun_ajaran}}" value="{{tahun.id_tahun_ajaran}}">{{tahun.id_tahun_ajaran + 2018}} - {{1 + tahun.id_tahun_ajaran + 2018}}</option>
+                    {% endfor %}
+                </select>
+                <label for="koordinator">Dosen Koordinator</label>
+                <input type="number" name="koordinator" id="koordinator" placeholder="" min="0" max="100" required>
+                <label for="penguji">Dosen Penguji 1 & 2</label>
+                <input type="number" name="penguji" id="penguji" placeholder="" min="0" max="100" required>
+                <!-- <label for="anggota-penguji">Anggota Dosen Penguji</label>
+                <input type="number" id="anggota-penguji" placeholder="30" min="0" max="100"> -->
+                <label for="pembimbing">Dosen Pembimbing</label>
+                <input type="number" name="pembimbing" id="pembimbing" placeholder="" min="0" max="100" required>
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" onclick="cancelEditBobotForm()">Cancel</button>
+                    <button type="submit" class="ok-btn">OK</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="edit-koordinator">
+            <h2 id="titleNilai"></h2>
+            <form method="post">
+                <label for="nilai">Nilai</label>
+                <input type="number" id="nilai" name="nilai" placeholder="" min="0" max="100">
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" onclick="cancelEditBobotForm()">Cancel</button>
+                    <button type="submit" class="ok-btn">OK</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="edit-penguji1">
+            <h2>Edit Bobot Penguji 1 & 2</h2>
+            <form method="post">
+                <label for="tata-tulis">Tata Tulis</label>
+                <input type="number" name="ttu" id="tata-tulis" placeholder="25" min="0" max="100">
+                <label for="kelengkapan-materi">Kelengkapan Materi</label>
+                <input type="number" name="kmu" id="kelengkapan-materi" placeholder="25" min="0" max="100">
+                <label for="pencapaian-tujuan">Pencapaian Tujuan</label>
+                <input type="number" name="ptu" id="pencapaian-tujuan" placeholder="30" min="0" max="100">
+                <label for="pengasaan-materi">Pengasaan Materi</label>
+                <input type="number" name="pmu" id="penguasaan-materi" placeholder="20" min="0" max="100">
+                <label for="presentasi">Presentasi</label>
+                <input type="number" name="pu" id="presentasi" placeholder="20" min="0" max="100">
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" onclick="cancelEditBobotForm()">Cancel</button>
+                    <button type="submit" class="ok-btn">OK</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="edit-penguji2">
+            <h2>Edit Bobot Penguji 2</h2>
+            <form>
+                <label for="tata-tulis">Tata Tulis</label>
+                <input type="number" id="tata-tulis2" placeholder="25" min="0" max="100">
+                <label for="kelengkapan-materi">Kelengkapan Materi</label>
+                <input type="number" id="kelengkapan-materi2" placeholder="25" min="0" max="100">
+                <label for="pencapaian-tujuan">Pencapaian Tujuan</label>
+                <input type="number" id="pencapaian-tujuan2" placeholder="30" min="0" max="100">
+                <label for="penguasaan-materi">Penguasaan Materi</label>
+                <input type="number" id="penguasaan-materi2" placeholder="20" min="0" max="100">
+                <label for="presentasi">Presentasi</label>
+                <input type="number" id="presentasi2" placeholder="20" min="0" max="100">
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" onclick="cancelEditBobotForm()">Cancel</button>
+                    <button type="button" class="ok-btn" onclick="submitEditBobotForm()">OK</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="edit-pembimbing">
+            <h2>Edit Bobot Pembimbing</h2>
+            <form method="post">
+                <label for="tata-tulis">Tata Tulis</label>
+                <input type="number" name="ttb" id="tata-tulis-p" placeholder="25" min="0" max="100">
+                <label for="kelengkapan-materi">Kelengkapan Materi</label>
+                <input type="number" name="kmb" id="kelengkapan-materi-p" placeholder="25" min="0" max="100">
+                <label for="proses-bimbingan">Proses Bimbingan</label>
+                <input type="number" name="pbb" id="proses-bimbingan-p" placeholder="30" min="0" max="100">
+                <label for="penguasaan-materi">Penguasaan Materi</label>
+                <input type="number" name="pmb" id="penguasaan-materi-p" placeholder="20" min="0" max="100">
+                <div class="buttons">
+                    <button type="button" class="cancel-btn" onclick="cancelEditBobotForm()">Cancel</button>
+                    <button type="submit" class="ok-btn">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rightbar Section -->
+    {% include 'koordinator/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>

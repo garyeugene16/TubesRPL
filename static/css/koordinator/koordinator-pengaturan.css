@@ -1,0 +1,313 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    color: #fff;
+    background-color: #121212;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    height: 100vh;
+  }
+  
+  .container {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    grid-template-rows: auto;
+    height: 100%;
+  }
+  
+  
+  /* Sidebar */
+  .sidebar {
+    background: #1c1c1c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .sidebar .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .sidebar .menu {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .sidebar .menu li {
+    margin: 15px 0;
+  }
+  
+  .sidebar .menu li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    border-radius: 5px;
+  }
+  .sidebar .menu li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    border-radius: 10px;
+  }
+  .sidebar .menu li:hover{
+    background-color: #4a91e288;
+    border-radius: 10px;
+  }
+  
+  /* .sidebar .menu .active a{
+    background: #2d89ef;
+  } */
+  #nilaiLink{
+    background: #2d89ef;
+    border-radius: 10px;
+  }
+  
+  
+  .sidebar .sign-out {
+    margin-top: auto;
+    color: red;
+    text-decoration: none;
+  }
+  
+  /* Main Content */
+  #main-side {
+    grid-template-rows: auto auto;
+    gap: 20px;
+    padding: 20px;
+}
+#greeting {
+    background-color: #4a90e2;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    font-size: 18px;
+}
+#bobot-list {
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+
+.student-item {
+  font-size: 18px;
+  margin: 5px 0;
+  padding: 10px;
+  background-color: #444;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.student-item:hover {
+  background-color: #555;
+}
+
+#input-nilai h2 {
+    margin-bottom: 15px;  
+    color: #61dafb;
+}
+
+#input-nilai   {
+  background-color: #333;
+  padding: 20px;
+  border-radius: 15px;
+}
+#bobot-list h2 {
+  margin-bottom: 15px;
+  color: #61dafb;
+}
+
+.bobot-item {
+    font-size: 18px;
+    margin: 5px 0;
+    padding: 10px;
+    background-color: #444;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.bobot-item-koor {
+  font-size: 18px;
+  margin: 5px 0;
+  padding: 10px;
+  background-color: #444;
+  border-radius: 10px;
+}
+
+.bobot-item:hover {
+  background-color: #555;
+}
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+.buttons button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+.buttons .edit-btn {
+    background-color: #f0ad4e;
+    color: white;
+}
+.buttons .ok-btn {
+    background-color: #5cb85c;
+    color: white;
+}
+.buttons .cancel-btn {
+    background-color: #d9534f;
+    color: white;
+}
+.edit-form {
+    display: none;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+}
+.edit-form.active {
+    display: block;
+}
+.edit-form input, .edit-form select {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+  
+  /* Calendar */
+  .calendar {
+    background: #1c1c1c;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .calendar .user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .calendar .user img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .calendar .notification {
+    margin-bottom: 20px;
+  }
+  
+  .calendar .cal-wrapper {
+    text-align: center;
+  }
+  
+  .calendar .cal-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .calendar .cal-table td {
+    text-align: center;
+    padding: 10px;
+    color: #fff;
+  }
+  
+  .calendar .cal-table .highlight {
+    background: #2d89ef;
+    border-radius: 50%;
+    color: #fff;
+  }
+  
+  .edit-penguji1{
+    display: none;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .edit-penguji1.active {
+      display: block;
+  }
+  .edit-penguji1 input, .edit-form select {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 5px;
+  }
+
+  .edit-penguji2 {
+    display: none;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  .edit-penguji2.active {
+    display: block;
+  }
+  .edit-penguji2 input, .edit-form select {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+
+
+  .edit-pembimbing {
+    display: none;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  .edit-pembimbing.active {
+    display: block;
+  }
+  .edit-pembimbing input, .edit-form select {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+
+
+  .edit-koordinator {
+    display: none;
+    background-color: #333;
+    padding: 20px;
+    border-radius: 15px;
+  }
+  .edit-koordinator.active {
+    display: block;
+  }
+  .edit-koordinator input, .edit-form select {
+    padding: 10px;
+    margin: 10px 0;
+    width: 100%;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }

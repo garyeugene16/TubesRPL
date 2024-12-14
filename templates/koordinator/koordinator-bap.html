@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catatan Sidang</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-bap.css') }}">
+
+  <script>
+    function selectMahasiswa(name, npm, topic, supervisor, examiners, examiners2) {
+        const studentList = document.getElementById('student-list');
+        const bapContainer = document.querySelector('.bap-container');
+
+        
+        // document.getElementById('npm').textContent = npm;
+        // document.getElementById('topic').textContent = topic;
+        // document.getElementById('supervisor').textContent = supervisor;
+        // document.getElementById('examiners').textContent = examiners;
+
+        
+        studentList.style.display = 'none';  
+        bapContainer.classList.add('active');  
+    }
+
+    function backToStudentList() {
+        const studentList = document.getElementById('student-list');
+        const bapContainer = document.querySelector('.bap-container');
+
+        
+        studentList.style.display = 'block';  
+        bapContainer.classList.remove('active');  
+    }
+
+    function agreeAction() {
+        alert("BAP disetujui!");
+        backToStudentList();
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    {% include 'koordinator/fragment/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div id="main-side">
+      <div id="greeting"><h2>Berita Acara Sidang Skripsi</h2></div>
+      <br>
+      <!-- Student List Section -->
+      <div id="student-list">
+          <h2>Pilih Mahasiswa</h2>
+          {% for sidang in info %}
+          <div class="student-item" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.npm_mahasiswa}}','{{sidang.judul_ta}}', '{{sidang.nama_pembimbing}}', '{{sidang.nama_penguji}}', '{{sidang.nama_penguji2}}')">{{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}</div>
+          {% endfor %}
+      </div>
+
+      <!-- BAP Content Section -->
+      <div class="bap-container">
+        <div class="bap-content">
+            <!-- <p>Program Studi Teknik Informatika Fakultas Teknologi Informasi dan Sains</p>
+            <p>Universitas Katolik Parahyangan</p>
+            <p>Berita Acara Sidang Skripsi</p>
+            <p>Semester: Genap 2021/2022</p>
+            <p>Telah diselenggarakan Review untuk mata kuliah AIF184002-05 Skripsi 2 bagi:</p>
+            <p><strong>NPM:</strong> <span id="npm"></span></p>
+            <p><strong>Topik:</strong> <span id="topic"></span></p>
+            <p><strong>Pembimbing dan Penguji:</strong></p>
+            <ul>
+                <li>Pembimbing: <span id="supervisor"></span></li>
+                <li>Penguji: <span id="examiners"></span></li>
+            </ul>
+            <p>Rekapitulasi nilai Sidang Skripsi 2 yang diberikan oleh pembimbing, penguji & koordinator skripsi:</p>
+            <p>(Add table or other data as necessary)</p> -->
+            <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
+        </div>
+        <div class="buttons">
+            <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
+            <button type="button" class="agree-btn" onclick="agreeAction()">Setuju</button>
+        </div>
+    </div>
+      </div>
+
+    <!-- Rightbar Section -->
+    {% include 'koordinator/fragment/rightbar.html' %}
+  </div>
+</body>
+</html>
