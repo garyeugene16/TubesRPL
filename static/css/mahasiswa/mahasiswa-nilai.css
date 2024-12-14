@@ -1,0 +1,158 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    color: #fff;
+    background-color: #121212;
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto;
+    height: 100vh;
+  }
+  
+  .container {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    grid-template-rows: auto;
+    height: 100%;
+  }
+
+  .links{
+    text-decoration: none;
+    color: #2d89ef;
+  }
+
+  table{
+    font-size: 20px;
+  }
+  
+  /* Sidebar */
+  .sidebar {
+    background: #1c1c1c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .sidebar .title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .sidebar .menu {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+  }
+  
+  .sidebar .menu li {
+    margin: 15px 0;
+  }
+  
+  .sidebar .menu li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    border-radius: 5px;
+  }
+  .sidebar .menu li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 20px;
+    display: block;
+    border-radius: 10px;
+  }
+  .sidebar .menu li:hover{
+    background-color: #4a91e288;
+    border-radius: 10px;
+  }
+
+  .sidebar .menu .active a {
+    background: #2d89ef;
+  }
+  
+  .sidebar .sign-out {
+    margin-top: auto;
+    color: red;
+    text-decoration: none;
+  }
+  
+  /* Main Content */
+  .welcome-box {
+    background-color: #4a90e2;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+  }
+  .content {
+    background: black;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .content .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .content table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .content table th, .content table td {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  #nilai{
+    background: #2d89ef;
+    border-radius: 10px;
+  }
+  
+  .content table thead {
+    background: #2c2c2c;
+  }
+  
+  .content table tbody tr:nth-child(even) {
+    background: #202020;
+  }
+  
+  /* Calendar */
+  .calendar {
+    background: #1c1c1c;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .calendar .user {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .calendar .user img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+  }
+  
+  .calendar .notification {
+    margin-bottom: 20px;
+  }
+  
+  .calendar .cal-wrapper {
+    text-align: center;
+  }
+  
