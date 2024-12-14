@@ -83,10 +83,27 @@
                         data: JSON.stringify(data),
                         success: function(response) {
                             console.log(response['info'])
-                            if(response['info'] == 'found')
-                                window.location.href = '/home'
-                            else
-                                alert("Email dan password anda salah!")
+                            if(response['info'] == 'mahasiswa'){
+                                console.log('mahasiswa')
+                                window.location.href = 'mahasiswa/home'
+                            }
+                            else if(response['info'] == 'pembimbing'){
+                                console.log('pembimbing')
+                                window.location.href = 'pembimbing/home'
+                            }
+                            else if(response['info'] == 'penguji'){
+                                console.log('penguji')
+                                window.location.href = 'penguji/home'
+                            }
+                                
+                            else if (response['info'] == 'koordinator'){
+                                console.log('koordinator')
+                                window.location.href = 'koordinator/home'
+                            }
+                            else{
+                                alert('Username atau password anda salah!')
+                            }
+                                
                         },
                         error: function(xhr, status, error) {
                             $('#errorMessage').text('Terjadi kesalahan saat mengirim data.').show();
