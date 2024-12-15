@@ -1,11 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catatan Sidang</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-home.css') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catatan Sidang</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/koordinator/koordinator-home.css') }}">
+    <script>
+        //script untuk tanggal
+        document.addEventListener('DOMContentLoaded', function () {
+            const today = new Date();
+            const currentMonth = today.getMonth(); // Desember = 11
+            const currentYear = today.getFullYear();
+            const currentDate = today.getDate();
+    
+            // Pastikan bulan dan tahun adalah Desember 2024
+            if (currentMonth === 11 && currentYear === 2024) {
+                // Cari elemen <td> dengan data-day yang sesuai
+                const todayCell = document.querySelector(`td[data-day='${currentDate}']`);
+                if (todayCell) {
+                    todayCell.style.backgroundColor = '#2d89ef';
+                    todayCell.style.borderRadius = '50%';
+                    todayCell.style.fontWeight = 'bold';
+                }
+            }
+            });
 
+    </script>
 </head>
 <body>
   <div class="container">

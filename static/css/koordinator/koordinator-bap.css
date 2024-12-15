@@ -1,208 +1,359 @@
 /* Global Styles */
 body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    color: #fff;
-    background-color: #121212;
-    display: grid;
-    grid-template-columns: auto;
-    grid-template-rows: auto;
-    height: 100vh;
-  }
-  
-  .container {
-    display: grid;
-    grid-template-columns: 250px 1fr 300px;
-    grid-template-rows: auto;
-    height: 100%;
-  }
-  
-  
-  /* Sidebar */
-  .sidebar {
-    background: #1c1c1c;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-  
-  .sidebar .title {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .sidebar .menu {
-    list-style: none;
-    padding: 0;
-    width: 100%;
-  }
-  
-  .sidebar .menu li {
-    margin: 15px 0;
-  }
-  
-  .sidebar .menu li a {
-    text-decoration: none;
-    color: #fff;
-    padding: 10px 20px;
-    display: block;
-    border-radius: 5px;
-  }
-  .sidebar .menu li a {
-    text-decoration: none;
-    color: #fff;
-    padding: 10px 20px;
-    display: block;
-    border-radius: 10px;
-  }
-  .sidebar .menu li:hover{
-    background-color: #4a91e288;
-    border-radius: 10px;
-  }
-  
-  /* .sidebar .menu .active a{
-    background: #2d89ef;
-  } */
-   
-  #bapLink{
-    background: #2d89ef;
-    border-radius: 10px;
-  }
-  
-  
-  .sidebar .sign-out {
-    margin-top: auto;
-    color: red;
-    text-decoration: none;
-  }
-  
-  /* Main Content */
-  #main-side {
-    grid-template-rows: auto auto;
-    gap: 20px;
-    padding: 20px;
-}
-#greeting {
-    background-color: #4a90e2;
-    border-radius: 10px;
-    padding: 20px;
-    color: white;
-    font-size: 18px;
-}
-#student-list {
-    background-color: #333;
-    padding: 20px;
-    border-radius: 15px;
-}
-#student-list h2 {
-    margin-bottom: 15px;
-    color: #61dafb;
-}
-.student-item {
-    font-size: 18px;
-    margin: 5px 0;
-    padding: 10px;
-    background-color: #444;
-    border-radius: 10px;
-    cursor: pointer;
-}
-.bap-container {
-    display: none;
-    background-color: #333;
-    padding: 20px;
-    border-radius: 15px;
-    color: white;
-}
-.bap-container.active {
-    display: block;
-}
-.bap-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-.bap-content {
-  display: flex;
-  font-size: 16px;
-  line-height: 1.6;
-  justify-content: center;
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  color: #fff;
+  background-color: #121212;
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto;
+  height: 100vh;
 }
 
-img {
+#home {
+  display: grid;
+  grid-template-columns: 250px 1fr 300px;
+  grid-template-rows: auto;
+  height: 100%;
+}
+
+#bapLink{
+background: #2d89ef;
+border-radius: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+background: #1c1c1c;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px;
+}
+
+.sidebar .title {
+font-size: 18px;
+font-weight: bold;
+margin-bottom: 20px;
+}
+
+.sidebar .menu {
+list-style: none;
+padding: 0;
+width: 100%;
+}
+
+.sidebar .menu li {
+margin: 15px 0;
+}
+
+.sidebar .menu li a {
+text-decoration: none;
+color: #fff;
+padding: 10px 20px;
+display: block;
+border-radius: 5px;
+}
+
+.sidebar .menu li a {
+text-decoration: none;
+color: #fff;
+padding: 10px 20px;
+display: block;
+border-radius: 10px;
+transition: 0.5s;
+}
+.sidebar .menu li:hover{
+background-color: #4a91e288;
+border-radius: 10px;
+
+}
+
+/* .sidebar .menu .active a{
+background: #2d89ef;
+} */
+
+.sidebar .sign-out {
+margin-top: auto;
+color: red;
+text-decoration: none;
+}
+
+/* Main Content */
+#main-side {
+  padding: 20px;
   display: flex;
-  justify-content: center;
-  align-self: center;
-  width: 620px;
+  flex-direction: column;
+  gap: 20px
+}
+
+#greeting {
+  background-color: #4a90e2;
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  font-size: 18px;
+}
+
+.content-header {
+  background-color: #4a90e2;
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.content-header h2 {
+  margin: 0;
+}
+
+.content-header p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #e0e0e0;
+}
+#mahasiswa-info {
+background: #444;
+padding: 15px;
+border-radius: 5px;
+color: white;
+}
+
+#mahasiswa-info h4 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+}
+
+#mahasiswa-info p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+#student-list {
+background-color: #333;
+padding: 20px;
+border-radius: 10px;
+}
+#student-list h2 {
+margin-bottom: 15px;
+color: #61dafb;
+}
+.student-item {
+font-size: 18px;
+margin: 5px 0;
+padding: 10px;
+background-color: #444;
+border-radius: 10px;
+cursor: pointer;
+}
+.student-item:hover{
+background-color: #555;
+border-radius: 10px;
+cursor: pointer;
+}
+.bap-container {
+display: none;
+background-color: #333;
+padding: 20px;
+border-radius: 10px;
+color: white;
+}
+.bap-container.active {
+display: block;
+}
+.bap-container h2 {
+text-align: center;
+margin-bottom: 20px;
+}
+.bap-content {
+font-size: 16px;
+line-height: 1.6;
+}
+
+.current-day {
+background-color: #2d89ef;
+color: #000;
+font-weight: bold;
+border-radius: 100%;
+}
+
+#pdf-preview {
+background-color: #444;
+padding: 20px;
+border-radius: 10px;
+} 
+
+#pdf-embed {
+border: none;
+background: white;
+border-radius: 5px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#bap-info {
+margin: 10px 0;
+padding: 10px;
+border-radius: 5px;
+background: #333;
+text-align: center;
+}
+
+#bap-info p {
+margin: 0;
+color: #fff;
+}
+.bap-content {
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bap-content img {
+  width: 40%;
   border-radius: 10px;
   object-fit: cover;
 }
+
 .buttons {
-    margin-top: 20px;
-    display: flex;
-    justify-content: left;
-    gap: 10px;
+margin-top: 20px;
+display: flex;
+gap: 10px;
+justify-content: center;
 }
 .buttons button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
+padding: 10px 15px;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+font-size: 16px;
 }
 .buttons .back-btn {
-    background-color: #d9534f;
-    color: white;
+background-color: #d9534f;
+color: white;
 }
-.buttons .agree-btn {
-  margin-left: auto;
-    background-color: #5cb85c;
-    color: white;
+.buttons .submit-btn {
+display: block;
+background-color: #b3b3b3;
+color: black;
+cursor: not-allowed;
 }
-  /* Calendar */
-  .calendar {
-    background: #1c1c1c;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .calendar .user {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .calendar .user img {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
-  }
-  
-  .calendar .notification {
-    margin-bottom: 20px;
-  }
-  
-  .calendar .cal-wrapper {
-    text-align: center;
-  }
-  
-  .calendar .cal-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .calendar .cal-table td {
-    text-align: center;
-    padding: 10px;
-    color: #fff;
-  }
-  
-  .calendar .cal-table .highlight {
-    background: #2d89ef;
-    border-radius: 50%;
-    color: #fff;
-  }
-  
+
+.buttons .uploaded:hover {
+display: block;
+background-color: #92b792;
+color: white;
+cursor: pointer;
+}
+.buttons .uploaded {
+display: block;
+background-color: #5cb85c;
+color: white;
+cursor: pointer;
+}
+
+.buttons .back-btn:hover {
+background-color: #dd8683;
+color: white;
+}
+
+.buttons .btn-unduh {
+background-color: #2d89ef;
+color: white;
+}
+.buttons .btn-unduh:hover {
+background-color: #5a9dea;
+color: white;
+}
+
+/* untuk tombol file upload */
+.file-upload {
+margin: 20px 0;
+text-align: center;
+}
+
+.file-input {
+display: none;
+}
+
+.file-label {
+display: inline-block;
+padding: 12px 36px;
+background: white;
+color: black;
+border-radius: 5px;
+cursor: pointer;
+justify-content: center;
+transition: all 0.3s ease;
+}
+
+.file-label:hover {
+background: #1a6cbd;
+color: white;
+}
+
+.file-icon {
+margin-right: 8px;
+font-size: 1.2em;
+}
+
+.file-label.has-file {
+background-color: #F0AD4E;
+}
+
+/* Calendar */
+.calendar {
+background: #1c1c1c;
+padding: 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+.calendar .user {
+display: flex;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.calendar .user img {
+border-radius: 50%;
+width: 40px;
+height: 40px;
+margin-right: 10px;
+}
+
+.calendar .notification {
+margin-bottom: 20px;
+}
+
+.calendar .cal-wrapper {
+text-align: center;
+}
+
+.calendar .cal-table {
+width: 100%;
+border-collapse: collapse;
+}
+
+.calendar .cal-table td {
+text-align: center;
+padding: 10px;
+color: #fff;
+}
+
+.calendar .cal-table .highlight {
+background: #2d89ef;
+border-radius: 50%;
+color: #fff;
+}
+
+.current-day {
+background-color: #2d89ef;
+color: #000;
+font-weight: bold;
+border-radius: 100%;
+}

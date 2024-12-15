@@ -1,7 +1,17 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, jsonify
 import sqlite3
+from flask import Blueprint, jsonify, render_template,session, url_for, redirect, request, flash
+import sqlite3
+import os
+from flask import Blueprint, Flask, render_template, send_from_directory, session, redirect, url_for, request
+import sqlite3
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = 'uploads/bap'
+ALLOWED_EXTENSIONS = {'pdf'}
 
 koordinator_bp = Blueprint('koordinator', __name__)
+
 def get_db_connection():
     conn = sqlite3.connect('database/database.db') 
     conn.row_factory = sqlite3.Row 
@@ -96,7 +106,7 @@ def info():
                 SET 
                     nik_penguji = ?,
                     nik_penguji2 = ?,
-                    nik_pembimbing = ?
+                    nik_pembimbing = ?,
                 WHERE ID_Sidang = ?
             """, (nik_penguji1, nik_penguji2, nik_pembimbing,id_sidang))
             conn.commit()
@@ -164,16 +174,6 @@ def tambah_sidang():
     except Exception as e:
         print(f"Error adding sidang: {e}")
         return "An error occurred", 500
-
-@koordinator_bp.route('/bap')
-def bap():
-    nama = session.get('nama', None)
-    if request.method == 'GET':
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM InfoSidang")
-        info = cursor.fetchall()
-        return render_template('koordinator/koordinator-bap.html', nama=nama, info=info)
 
 
 @koordinator_bp.route('/pengaturan_waktu_dan_lokasi', methods=['GET', 'POST'])
@@ -422,4 +422,139 @@ def pengaturan_nilai():
                     }
                     for row in bobots
                 ]
-            return render_template('koordinator/koordinator-pengaturan.html', nama = nama, info=info, nilai=nilais, id_sidang_in_nilai=id_sidang_in_nilai, nik=nik, bobot=bobot, bobots = all_bobot)   
+            return render_template('koordinator/koordinator-pengaturan.html', nama = nama, info=info, nilai=nilais, id_sidang_in_nilai=id_sidang_in_nilai, nik=nik, bobot=bobot, bobots = all_bobot)  
+        
+# HANDLE BAP :        
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@koordinator_bp.route('/bap')
+def bap():
+    nama = session.get('nama', None)
+    nik = session.get('id', None)
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM InfoSidang")
+    info = cursor.fetchall()
+    
+    return render_template('koordinator/koordinator-bap.html', nama=nama, info=info)
+
+@koordinator_bp.route('/upload-bap', methods=['POST'])
+def upload_bap():
+    try:
+        id_sidang = request.form.get('id_sidang')
+        
+        # Cek status penguji di tabel BAP
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        if 'bap' not in request.files:
+            flash('Tidak ada file yang dipilih')
+            return redirect(url_for('koordinator.bap'))
+        
+        file = request.files['bap']
+        
+        if file.filename == '':
+            flash('Tidak ada file yang dipilih')
+            return redirect(url_for('koordinator.bap'))
+        
+        if file and allowed_file(file.filename):
+            if not os.path.exists(UPLOAD_FOLDER):
+                os.makedirs(UPLOAD_FOLDER)
+            # rename file bap
+            filename = f"bap_{id_sidang}.pdf"
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            
+            file.save(file_path)
+            
+            if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+                # Update status pembimbing di tabel BAP
+                cursor.execute("""
+                    UPDATE BAP 
+                    SET file_path = ?, status_koordinator = 'sudah'
+                    WHERE idSidang = ?
+                """, (file_path, id_sidang))
+                conn.commit()
+                flash('File berhasil diupload')
+            else:
+                flash('Gagal menyimpan file')
+                
+        return redirect(url_for('koordinator.bap'))
+    
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        flash('Terjadi kesalahan saat upload file')
+        return redirect(url_for('koordinator.bap'))
+    finally:
+        if conn:
+            conn.close()
+
+@koordinator_bp.route('/get-bap/<id_sidang>')
+def get_bap(id_sidang):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # Ambil File path dari BAP
+    cursor.execute("""
+        SELECT b.file_path
+        FROM BAP b 
+        WHERE b.idSidang = ?
+    """, (id_sidang,))
+    result = cursor.fetchone()
+    
+    response = {
+        'file_path': None,
+        'can_upload': True
+    }
+    
+    if result:
+        if result['file_path'] and os.path.exists(result['file_path']):
+            response['file_path'] = result['file_path']
+    
+    return jsonify(response)
+
+@koordinator_bp.route('/download-bap/<id_sidang>')
+def download_bap(id_sidang):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT file_path FROM BAP WHERE idSidang = ?", (id_sidang,))
+        result = cursor.fetchone()
+        
+        if result and result['file_path'] and os.path.exists(result['file_path']):
+            directory = os.path.dirname(result['file_path'])
+            filename = os.path.basename(result['file_path'])
+            return send_from_directory(
+                directory,
+                filename,
+                as_attachment=True,
+                mimetype='application/pdf'
+            )
+        return "", 404
+        
+    except Exception as e:
+        print(f"Error downloading: {str(e)}")
+        return "Gagal mengunduh BAP", 500
+
+@koordinator_bp.route('/view-bap/<id_sidang>')
+def view_bap(id_sidang):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT file_path FROM BAP WHERE idSidang = ?", (id_sidang,))
+        result = cursor.fetchone()
+        print(result['file_path'])
+        if result and result['file_path'] and os.path.exists(result['file_path']):
+            directory = os.path.dirname(result['file_path'])
+            filename = os.path.basename(result['file_path'])
+            return send_from_directory(
+                directory,
+                filename,
+                mimetype='application/pdf'
+            )
+
+        return "<p>Path BAP tidak ada<p>", 404
+        
+    except Exception as e:
+        print(f"Error viewing BAP: {str(e)}")
+        return "Gagal menampilkan BAP", 500
