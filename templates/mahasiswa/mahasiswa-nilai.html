@@ -6,7 +6,21 @@
   <title>Sidang Akhir</title>
   <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-nilai.css') }}"> -->
   <link rel="stylesheet" href="../../static/css/mahasiswa/mahasiswa-nilai.css">
-
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const selectElement = document.getElementById('tahunAjaranSelect');
+      // Mengatur nilai yang terpilih jika sudah ada di URL
+      const tahunAjaranId = new URLSearchParams(window.location.search).get('tahun_ajaran');
+      if (tahunAjaranId) {
+        selectElement.value = tahunAjaranId;
+      }
+      selectElement.addEventListener('change', function() {
+        const tahunAjaranId = this.value;
+        console.log("Tahun Ajaran yang dipilih:", tahunAjaranId);  // Debugging log
+        window.location.href = `?tahun_ajaran=${tahunAjaranId}`;
+      });
+    });
+  </script>
 </head>
 <body>
   <div class="container">
@@ -19,93 +33,112 @@
         <div class="welcome-box">
           Nilai Sidang
         </div>
-        <select>
+        <!-- <select>
           <option>GANJIL 2024/2025</option>
+        </select> -->
+        <!-- <select id="tahunAjaranSelect" name="tahun_ajaran" onchange="location.href='?tahun_ajaran=' + this.value;">
+          {% for tahun in bobots %}
+            <option value="{{ tahun.id_tahun_ajaran }}" {% if tahun_ajaran == tahun.id_tahun_ajaran %}selected{% endif %}>
+              {{ tahun.id_tahun_ajaran + 2018 }} / {{ tahun.id_tahun_ajaran + 2019 }}
+            </option>
+          {% endfor %}
+        </select> -->
+        <select id="tahunAjaranSelect" name="tahun_ajaran">
+          {% for tahun in bobots %}
+            <option value="{{ tahun.id_tahun_ajaran }}" {% if tahun_ajaran == tahun.id_tahun_ajaran %}selected{% endif %}>
+              {{ tahun.id_tahun_ajaran + 2018 }} / {{ tahun.id_tahun_ajaran + 2019 }}
+            </option>
+          {% endfor %}
         </select>
+        
       </header>
       
-      <!-- Tabel Nilai -->
-      <table>
-        <thead>
-          <tr>
-            <th>No.</th>
-            <th>Detail Nilai</th>
-            <th>Nilai Penguji</th>
-            <th>Nilai Pembimbing</th>
-            <th>Nilai Koordinator</th>
-            <th>Angka Akhir</th>
-            <th>Nilai Akhir</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>Tata Tulis</td>
-            <td>{{ nilai_detail.nilai_tata_tulis_penguji }}</td>
-            <td>{{ nilai_detail.nilai_tata_tulis_pembimbing }}</td>
-            <td rowspan="6">{{ nilai_detail.nilai_koordinator }}</td>
-            <!-- <td rowspan="6">{{ nilai_detail.total_nilai | round(2) }}</td> -->
-            <td rowspan="6">
-              {% if nilai_detail.total_nilai is not none %}
-                {{ nilai_detail.total_nilai | round(2) }}
-              {% else %}
-                Tidak Ada Nilai
-              {% endif %}
-            </td>
-            
-            <td rowspan="6">
-              {% if nilai_detail.total_nilai >= 80 %}
-                A
-              {% elif 77 <= nilai_detail.total_nilai <= 79 %}
-                A-
-              {% elif 73 <= nilai_detail.total_nilai <= 76 %}
-                B+
-              {% elif 70 <= nilai_detail.total_nilai <= 72 %}
-                B
-              {% elif 67 <= nilai_detail.total_nilai <= 69 %}
-                B-
-              {% elif 63 <= nilai_detail.total_nilai <= 66 %}
-                C+
-              {% elif 60 <= nilai_detail.total_nilai <= 62 %}
-                C
-              {% elif 50 <= nilai_detail.total_nilai <= 59 %}
-                D
-              {% else %}
-                E
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>Kelengkapan Materi</td>
-            <td>{{ nilai_detail.nilai_kelengkapan_materi_penguji }}</td>
-            <td>{{ nilai_detail.nilai_kelengkapan_materi_pembimbing }}</td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td>Pencapaian Tujuan</td>
-            <td>{{ nilai_detail.nilai_pencapaian_tujuan_penguji }}</td>
-            <td>{{ nilai_detail.nilai_proses_bimbingan_pembimbing }}</td>
-          </tr>
-          <tr>
-            <td>4</td>
-            <td>Penguasaan Materi</td>
-            <td>{{ nilai_detail.nilai_penguasaan_materi_penguji }}</td>
-            <td>{{ nilai_detail.nilai_penguasaan_materi_pembimbing }}</td>
-          </tr>
-          <tr>
-            <td>5</td>
-            <td>Presentasi</td>
-            <td>{{ nilai_detail.nilai_presentasi_penguji }}</td>
-            <td></td> <!-- Pembimbing tidak ada nilai presentasi -->
-          </tr>
-          <tr>
-            <td>6</td>
-            <td>Nilai Koordinator</td>
-            <td colspan="2">{{ nilai_detail.nilai_koordinator }}</td>
-          </tr>
-        </tbody>
-      </table>
+      {% if sidang and nilai_detail %}
+        <!-- Tabel Nilai -->
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Detail Nilai</th>
+              <th>Nilai Penguji</th>
+              <th>Nilai Pembimbing</th>
+              <th>Nilai Koordinator</th>
+              <th>Angka Akhir</th>
+              <th>Nilai Akhir</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Tata Tulis</td>
+              <td>{{ nilai_detail.nilai_tata_tulis_penguji }}</td>
+              <td>{{ nilai_detail.nilai_tata_tulis_pembimbing }}</td>
+              <td rowspan="6">{{ nilai_detail.nilai_koordinator }}</td>
+              <!-- <td rowspan="6">{{ nilai_detail.total_nilai | round(2) }}</td> -->
+              <td rowspan="6">
+                {% if nilai_detail.total_nilai is not none %}
+                  {{ nilai_detail.total_nilai | round(2) }}
+                {% else %}
+                  Tidak Ada Nilai
+                {% endif %}
+              </td>
+              
+              <td rowspan="6">
+                {% if nilai_detail.total_nilai >= 80 %}
+                  A
+                {% elif 77 <= nilai_detail.total_nilai <= 79 %}
+                  A-
+                {% elif 73 <= nilai_detail.total_nilai <= 76 %}
+                  B+
+                {% elif 70 <= nilai_detail.total_nilai <= 72 %}
+                  B
+                {% elif 67 <= nilai_detail.total_nilai <= 69 %}
+                  B-
+                {% elif 63 <= nilai_detail.total_nilai <= 66 %}
+                  C+
+                {% elif 60 <= nilai_detail.total_nilai <= 62 %}
+                  C
+                {% elif 50 <= nilai_detail.total_nilai <= 59 %}
+                  D
+                {% else %}
+                  E
+                {% endif %}
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>Kelengkapan Materi</td>
+              <td>{{ nilai_detail.nilai_kelengkapan_materi_penguji }}</td>
+              <td>{{ nilai_detail.nilai_kelengkapan_materi_pembimbing }}</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>Pencapaian Tujuan</td>
+              <td>{{ nilai_detail.nilai_pencapaian_tujuan_penguji }}</td>
+              <td>{{ nilai_detail.nilai_proses_bimbingan_pembimbing }}</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td>Penguasaan Materi</td>
+              <td>{{ nilai_detail.nilai_penguasaan_materi_penguji }}</td>
+              <td>{{ nilai_detail.nilai_penguasaan_materi_pembimbing }}</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td>Presentasi</td>
+              <td>{{ nilai_detail.nilai_presentasi_penguji }}</td>
+              <td></td> <!-- Pembimbing tidak ada nilai presentasi -->
+            </tr>
+            <tr>
+              <td>6</td>
+              <td>Nilai Koordinator</td>
+              <td colspan="2">{{ nilai_detail.nilai_koordinator }}</td>
+            </tr>
+          </tbody>
+        </table>
+      {% else %}
+        <p>Tidak ada data sidang atau nilai ditemukan.</p>
+      {% endif %}
     </main>
 
     <!-- Rightbar Section -->

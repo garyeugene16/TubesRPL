@@ -76,15 +76,41 @@ def nilai():
     nama = session.get('nama', None)
     role = session.get('role', None)
     
-    # Ambil informasi sidang
+    bobots = conn.execute('SELECT * FROM Bobot_PerTahun_Ajaran').fetchall()
+
+    
+    # # Ambil informasi sidang
+    # sidang_info = conn.execute('''
+    #     SELECT s.ID_Sidang, s.tempat_sidang, s.tanggal_sidang, s.waktu_mulai, s.waktu_selesai, s.catatan
+    #     FROM InfoSidang s
+    #     WHERE s.npm_mahasiswa = ? AND s.status = ?
+    # ''', (npm, 'active')).fetchone()
+    
+    
     sidang_info = conn.execute('''
         SELECT s.ID_Sidang, s.tempat_sidang, s.tanggal_sidang, s.waktu_mulai, s.waktu_selesai, s.catatan
-        FROM InfoSidang s
-        WHERE s.npm_mahasiswa = ? AND s.status = ?
-    ''', (npm, 'active')).fetchone()
+        FROM Sidang s
+        WHERE s.npm = ?
+        LIMIT 1
+    ''', (npm,)).fetchone()
 
+
+    tahun_ajaran = request.args.get('tahun_ajaran', None)
+    print(tahun_ajaran)
+    if tahun_ajaran:
+        # Filter berdasarkan tahun ajaran jika dipilih
+        # Ambil informasi sidang
+        sidang_info = conn.execute('''
+            SELECT s.ID_Sidang, s.tempat_sidang, s.tanggal_sidang, s.waktu_mulai, s.waktu_selesai, s.catatan
+            FROM Sidang s
+            WHERE s.ID_Tahun_Ajaran = ? AND s.npm = ?
+        ''', (tahun_ajaran, npm)).fetchone()
+        
+    print(sidang_info)
+        
     # Query gabungan untuk menghitung nilai total sidang berdasarkan bobot
-    nilai_detail = conn.execute('''
+    # Query gabungan untuk menghitung nilai total sidang berdasarkan bobot
+    nilai_detail_query = '''
         SELECT 
             np1.tata_tulis AS nilai_tata_tulis_penguji1,
             np1.kelengkapan_materi AS nilai_kelengkapan_materi_penguji1,
@@ -124,10 +150,18 @@ def nilai():
         JOIN Nilai_Pembimbing nb ON nb.ID_Sidang = s.ID_Sidang
         JOIN Nilai_Koordinator nk ON nk.id_sidang = s.ID_Sidang
         JOIN Bobot_PerTahun_Ajaran b ON s.ID_Tahun_Ajaran = b.ID_Tahun_Ajaran
-        WHERE s.npm = ? AND s.status = ?
-    ''', (npm, 'active')).fetchone()
+        WHERE s.npm = ?
+    '''
+
+    # Jika tahun_ajaran diberikan, tambahkan kondisi filter untuk tahun_ajaran
+    if tahun_ajaran:
+        nilai_detail_query += ' AND s.ID_Tahun_Ajaran = ?'
+
+    # Menjalankan query dengan parameter
+    nilai_detail = conn.execute(nilai_detail_query, (npm, tahun_ajaran) if tahun_ajaran else (npm,)).fetchone()
     conn.close()
     print(nilai_detail)
+    
     if not sidang_info or not nilai_detail:
         return f"Tidak ada data nilai sidang untuk mahasiswa dengan NPM '{npm}'", 404
     
@@ -147,7 +181,8 @@ def nilai():
         'mahasiswa/mahasiswa-nilai.html', 
         nama=nama, 
         sidang=sidang_info, 
-        nilai_detail=nilai_detail
+        nilai_detail=nilai_detail,
+        bobots=bobots
     )
 
     
