@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sidang Akhir</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-nilai.css') }}">
+  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-nilai.css') }}"> -->
+  <link rel="stylesheet" href="../../static/css/mahasiswa/mahasiswa-nilai.css">
+
 </head>
 <body>
   <div class="container">
@@ -30,7 +32,7 @@
             <th>Detail Nilai</th>
             <th>Nilai Penguji</th>
             <th>Nilai Pembimbing</th>
-            <th>Total Nilai</th>
+            <th>Nilai Koordinator</th>
             <th>Angka Akhir</th>
             <th>Nilai Akhir</th>
           </tr>
@@ -41,9 +43,17 @@
             <td>Tata Tulis</td>
             <td>{{ nilai_detail.nilai_tata_tulis_penguji }}</td>
             <td>{{ nilai_detail.nilai_tata_tulis_pembimbing }}</td>
-            <td rowspan="5">{{ nilai_detail.total_nilai }}</td>
-            <td>{{ nilai_detail.total_nilai | round(0) }}</td> <!-- Angka Akhir, bisa menggunakan formula atau rounding -->
-            <td>
+            <td rowspan="6">{{ nilai_detail.nilai_koordinator }}</td>
+            <!-- <td rowspan="6">{{ nilai_detail.total_nilai | round(2) }}</td> -->
+            <td rowspan="6">
+              {% if nilai_detail.total_nilai is not none %}
+                {{ nilai_detail.total_nilai | round(2) }}
+              {% else %}
+                Tidak Ada Nilai
+              {% endif %}
+            </td>
+            
+            <td rowspan="6">
               {% if nilai_detail.total_nilai >= 80 %}
                 A
               {% elif 77 <= nilai_detail.total_nilai <= 79 %}
@@ -64,7 +74,6 @@
                 E
               {% endif %}
             </td>
-            
           </tr>
           <tr>
             <td>2</td>
@@ -89,6 +98,11 @@
             <td>Presentasi</td>
             <td>{{ nilai_detail.nilai_presentasi_penguji }}</td>
             <td></td> <!-- Pembimbing tidak ada nilai presentasi -->
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>Nilai Koordinator</td>
+            <td colspan="2">{{ nilai_detail.nilai_koordinator }}</td>
           </tr>
         </tbody>
       </table>

@@ -96,7 +96,7 @@ def info():
                 SET 
                     nik_penguji = ?,
                     nik_penguji2 = ?,
-                    nik_pembimbing = ?,
+                    nik_pembimbing = ?
                 WHERE ID_Sidang = ?
             """, (nik_penguji1, nik_penguji2, nik_pembimbing,id_sidang))
             conn.commit()
