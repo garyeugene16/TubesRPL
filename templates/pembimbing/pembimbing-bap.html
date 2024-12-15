@@ -5,26 +5,129 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BAP - Berita Acara Sidang</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pembimbing/bap.css') }}">
+</head>
+<body>
+    <div id="home">
+        {% include 'pembimbing/fragment/sidebar.html' %}
+
+        <div id="main-side">
+            <div id="greeting"><strong>Berita Acara Sidang Skripsi</strong></div>
+
+            <div id="student-list">
+                <h2>Pilih Mahasiswa</h2>
+                {% for sidang in info %}
+                <div class="student-item" onclick="selectMahasiswa('{{sidang.ID_Sidang}}')">
+                    {{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="bap-container">
+                <div class="bap-content">
+                    <div id="mahasiswa-info" style="display: none;">
+                        <h4>Mahasiswa:</h4>
+                        <p id="mahasiswa-detail"></p>
+                    </div>
+
+                    <div id="pdf-preview" style="display: none;">
+                        <h4>Preview BAP:</h4>
+                        <embed id="pdf-embed" 
+                               type="application/pdf"
+                               width="100%"
+                               height="600px">
+                    </div>
+
+                    <div id="bap-info"></div>
+                    
+                    <form id="bapForm" action="{{ url_for('pembimbing.upload_bap') }}" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="id_sidang" name="id_sidang">
+                        
+                        <div class="file-upload">
+                            <input type="file" name="bap" id="bap" accept="application/pdf" required class="file-input">
+                            <label for="bap" class="file-label">
+                                <span class="file-icon">📄</span>
+                                <span class="file-name">Please choose file to Upload BAP</span>
+                            </label>
+                        </div>
+
+                        <div class="buttons">
+                            <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
+                            <button type="submit" class="submit-btn">Upload BAP</button>
+                            <button type="button" class="btn-unduh" onclick="downloadBap()">Unduh BAP</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        {% include 'pembimbing/fragment/rightbar.html' %}
+    </div>
+
     <script>
-        function selectMahasiswa(name, npm, topic, supervisor, examiners) {
-            const studentList = document.getElementById('student-list');
-            const bapContainer = document.querySelector('.bap-container');
+        function selectMahasiswa(idSidang) {
+            document.getElementById('id_sidang').value = idSidang;
+            document.getElementById('student-list').style.display = 'none';
+            document.querySelector('.bap-container').classList.add('active');
 
+            // Ambil data mahasiswa dari elemen yang diklik
+            const studentElement = event.currentTarget;
+            const mahasiswaInfo = studentElement.textContent;
+            
+            // Tampilkan info mahasiswa
+            const mahasiswaInfoDiv = document.getElementById('mahasiswa-info');
+            const mahasiswaDetail = document.getElementById('mahasiswa-detail');
+            mahasiswaInfoDiv.style.display = 'block';
+            mahasiswaDetail.textContent = mahasiswaInfo;
 
-            studentList.style.display = 'none';
-            bapContainer.classList.add('active');
+            // Fetch BAP info
+            fetch(`/pembimbing/get-bap/${idSidang}`)
+                .then(response => response.json())
+                .then(data => {
+                    const bapInfo = document.getElementById('bap-info');
+                    const pdfPreview = document.getElementById('pdf-preview');
+                    const pdfEmbed = document.getElementById('pdf-embed');
+                    const uploadForm = document.getElementById('bapForm');
+                    //jika belum disetujui pihak sebelumnya
+                    if(!data.can_upload) {
+                        bapInfo.innerHTML = `<p style="color: red;">Menunggu persetujuan dari penguji</p>`;
+                        uploadForm.style.display = 'none';
+                        pdfPreview.style.display = 'none';
+                    
+                    } else {
+                        uploadForm.style.display = 'block';
+                        //jika sudah di setejui pihak sebelumnya dan bap sudah upload
+                        if(data.file_path) {
+                            bapInfo.innerHTML = `<p>BAP sudah diupload</p>`;
+                            pdfPreview.style.display = 'block';
+                            bapInfo.style.display = 'none';
+                            pdfEmbed.src = `/pembimbing/view-bap/${idSidang}`;
+                            //jika sudah disetujui tapi bap blm di upload
+                        } else {
+                            pdfPreview.style.display = 'none';
+                            pdfEmbed.style.display = 'none';
+                            bapInfo.innerHTML = `<p>BAP belum di-upload</p>`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const bapInfo = document.getElementById('bap-info');
+                    bapInfo.innerHTML = `<p>Terjadi kesalahan saat memuat data</p>`;
+                });
         }
 
         function backToStudentList() {
-            const studentList = document.getElementById('student-list');
-            const bapContainer = document.querySelector('.bap-container');
-
-            studentList.style.display = 'block';
-            bapContainer.classList.remove('active');
+            document.getElementById('student-list').style.display = 'block';
+            document.querySelector('.bap-container').classList.remove('active');
+            const pdfPreview = document.getElementById('pdf-preview');
+            const pdfEmbed = document.getElementById('pdf-embed');
+            pdfPreview.style.display = 'none';
+            pdfEmbed.src = '';  // Clear PDF when going back
         }
 
-        function agreeAction() {
-            alert("BAP disetujui!");
+        function downloadBap() {
+            const idSidang = document.getElementById('id_sidang').value;
+            window.location.href = `/pembimbing/download-bap/${idSidang}`;
         }
         document.addEventListener('DOMContentLoaded', function () {
           const today = new Date();
@@ -41,37 +144,22 @@
               }
           }
       });
+
+      // Event listener untuk perubahan file input
+      document.getElementById('bap').addEventListener('change', function(e) {
+          const fileName = e.target.files[0]?.name;
+          const fileLabel = document.querySelector('.file-label');
+          const fileText = fileLabel.querySelector('.file-name');
+          const submitBtn = document.querySelector('.submit-btn');
+          
+          if (fileName) {
+              fileLabel.classList.add('has-file');
+              submitBtn.classList.add('uploaded');
+              fileText.textContent = "File : "+fileName;
+          } else {
+              fileLabel.classList.remove('has-file');
+          }
+      });
     </script>
-</head>
-<body>
-    <div id="home">
-        <!-- sidebar -->
-        {% include 'pembimbing/fragment/sidebar.html' %}
-
-        <div id="main-side">
-            <div id="greeting"><strong>Berita Acara Sidang Skripsi</strong></div>
-
-            <!-- Student List Section -->
-            <div id="student-list">
-                <h2>Pilih Mahasiswa</h2>
-                <div class="student-item" onclick="selectMahasiswa('Jason Kelvin Agung', '6182201082','AI in Healthcare', 'Dr. Smith', 'Prof. Johnson')">Jason Kelvin Agung</div>
-                <div class="student-item" onclick="selectMahasiswa('Maria Clara', '6182201083','IoT Security', 'Dr. Brown', 'Prof. White')">Maria Clara</div>
-            </div>
-
-            <!-- BAP Content Section -->
-            <div class="bap-container">
-                <div class="bap-content">
-                    <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
-                    <div class="buttons">
-                        <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
-                        <button type="submit" class="submit-btn">Simpan</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- calender -->
-        {% include 'pembimbing/fragment/rightbar.html' %}
-    </div>
 </body>
 </html>

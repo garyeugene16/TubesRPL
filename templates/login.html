@@ -11,6 +11,10 @@
                 align-items: center;
                 height: 100vh;
                 background-color: black;
+                /* vvvvvvvvvvvvvvvvvvvvvvvv comment agar gambar tidak terlihat */
+                background: url("{{url_for('static', filename='png/backgroundUnpar.jpeg')}}") no-repeat center center/cover;
+                height: 100vh;
+                margin: 0;
                 font-family: Arial, Helvetica, sans-serif;
             }
             #input {
@@ -30,12 +34,17 @@
                 padding: 7px;
                 color: white;
             }
+
             [value="LOGIN"] {
                 width: 100px;
                 margin-left: 35%;
                 color: white;
                 font-weight: bold;
                 cursor: pointer;
+            }
+            [value="LOGIN"]:hover {
+                background-color: white;
+                color: black;
             }
             form {
                 font-weight: bold;

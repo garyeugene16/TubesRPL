@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 app = Flask(__name__)
 mahasiswa_bp = Blueprint('mahasiswa', __name__)
 
-UPLOAD_FOLDER = os.path.join(app.root_path, 'uploads', 'bap')
+UPLOAD_FOLDER = os.path.join('uploads', 'bap')
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_EXTENSIONS = {'pdf'}
