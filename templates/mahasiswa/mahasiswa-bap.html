@@ -20,8 +20,15 @@
         <div class="content-body">
             <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
             <div id="buttons">
-              <button class="btn-setuju" >Setuju</button>
-              <button class="btn-unduh" >Unduh</button>
+              <form action="{{ url_for('mahasiswa.upload_bap') }}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="bap_file" required>
+                <button type="submit" class="btn-upload">Upload</button>
+              </form>
+            
+              <form action="{{ url_for('mahasiswa.unduh_bap') }}" method="POST">
+                <button type="submit" class="btn-unduh">Unduh</button>
+              </form>
+            
             </div>
         </div>
     </div>
