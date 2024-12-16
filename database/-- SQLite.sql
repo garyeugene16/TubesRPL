@@ -22,6 +22,6 @@ VALUES (2, 1, 77, 77, 77, 77, 'P001')
 INSERT INTO Nilai_Penguji(ID_Sidang, tata_tulis, kelengkapan_materi, pencapaian_tujuan, penguasaan_materi, presentasi, nik)
 VALUES (9, 77, 77, 77, 77, 77, 'P001')
 
-UPDATE Sidang
-SET status = 'deactive'
-WHERE ID_Sidang = 8;
+UPDATE BAP
+SET file_path = 'uploads/bap/bap_1.pdf'
+WHERE id_bap = 1;

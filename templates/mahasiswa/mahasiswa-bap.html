@@ -18,16 +18,31 @@
             <h2>BAP (Berita Acara Sidang)</h2>
         </div>
         <div class="content-body">
-            <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
+            <!-- Preview PDF -->
+            {% if bap_data.file_path %}
+            <div id="pdf-preview">
+                <h4>Preview BAP:</h4>
+                <embed 
+                    id="pdf-embed" 
+                    type="application/pdf" 
+                    src="{{ url_for('mahasiswa.serve_bap_file', filename=bap_data['file_path'].split('/')[-1]) }}" 
+                    width="100%" 
+                    height="550px">
+            </div>
+            {% else %}
+            <p style="color: red;">BAP belum tersedia.</p>
+            {% endif %}
+
             <div id="buttons">
               <form action="{{ url_for('mahasiswa.upload_bap') }}" method="POST" enctype="multipart/form-data">
                 <input type="file" name="bap_file" required>
-                <button type="submit" class="btn-upload">Upload</button>
+                <button type="submit" class="btn-upload" {% if bap_data.status_pembimbing == 'belum' %}disabled{% endif %}>Upload</button>
               </form>
             
               <form action="{{ url_for('mahasiswa.unduh_bap') }}" method="POST">
                 <button type="submit" class="btn-unduh">Unduh</button>
               </form>
+            
             </div>
         </div>
     </div>

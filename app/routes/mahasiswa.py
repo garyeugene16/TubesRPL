@@ -17,7 +17,7 @@ def allowed_file(filename):
 
 # Fungsi untuk membuat penamaan file tetap sama
 def generate_filename(id_sidang):
-    return f'bap_sidang_{id_sidang}.pdf'
+    return f'bap_{id_sidang}.pdf'
 
 
 def get_db_connection():
@@ -188,6 +188,9 @@ def nilai():
     
     # return render_template('mahasiswa/mahasiswa-nilai.html', nama = nama, sidang=sidang_info, nilai_detail=nilai_detail)
 
+@mahasiswa_bp.route('/uploads/bap/<filename>')
+def serve_bap_file(filename):
+    return send_from_directory('uploads/bap', filename)
 
 @mahasiswa_bp.route('/bap', methods=['GET'])
 def bap():
@@ -202,13 +205,14 @@ def bap():
         WHERE idSidang IN (SELECT ID_Sidang FROM Sidang WHERE npm = ? and status = ?)
     ''', (npm, 'active'))
     bap_data = cursor.fetchone()
-    print(bap_data)
+
     conn.close()
     
     # Jika BAP ditemukan, tampilkan data, jika tidak, beri notifikasi
     if not bap_data:
         return "BAP belum tersedia", 404
 
+    print(bap_data['file_path'])
     return render_template('mahasiswa/mahasiswa-bap.html', nama=nama, bap_data=bap_data)
 
 
@@ -293,12 +297,6 @@ def upload_bap():
             SET file_path = ?, status_mahasiswa = 'sudah'
             WHERE idSidang = ?
         ''', (file_path, id_sidang))
-
-        cursor.execute('''
-            UPDATE Sidang 
-            SET status = 'selesai'
-            WHERE idSidang = ?
-        ''', (id_sidang,))
     else:
         # Jika pembimbing belum menandatangani, beri pesan error
         return "BAP belum ditandatangani oleh pembimbing", 400
