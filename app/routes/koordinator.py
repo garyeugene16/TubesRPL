@@ -88,7 +88,65 @@ def tambah_bap(id_sidang, npm_mahasiswa, judul_ta, nama_mahasiswa, nama_penguji_
         writer.write(output_file)
     print(f"PDF berhasil dibuat: {output_pdf}")
 
+def update_bap(id_sidang, np, nap, nb, nk, bp, bap, bb, bk, tp, tap, tb, tk, na):
+    def create_overlay(output_path, overlays):
+        c = canvas.Canvas(output_path, pagesize=letter)
+        c.setFont("Helvetica-Bold", 12)
 
+        for overlay in overlays:
+            text = str(overlay['text'])
+            x = overlay['x']
+            y = overlay['y']
+            width = overlay['width']
+            height = overlay['height']
+            
+            # c.rect(x, y, width, height)
+            c.setFillColorRGB(0.235, 0.235, 0.235)
+            c.drawString(x + 5, y + height - 15, text)
+        
+        c.save()
+
+    filenames = f"bap_{id_sidang}.pdf"
+    file_paths = os.path.join(UPLOAD_FOLDER, filenames)
+
+    input_pdf = file_paths
+    overlay_pdf = "overlay.pdf"
+    output_pdf = "hasil.pdf"
+
+    overlays = [
+        {"text": np, "x": 310, "y": 340, "width": 40, "height": 16},
+        {"text": nap, "x": 310, "y": 315, "width": 40, "height": 16},
+        {"text": nb, "x": 310, "y": 290, "width": 40, "height": 16},
+        {"text": nk, "x": 310, "y": 265, "width": 40, "height": 16},
+        {"text": bp, "x": 364, "y": 340, "width": 40, "height": 16},
+        {"text": bap, "x": 364, "y": 315, "width": 40, "height": 16},
+        {"text": bb, "x": 364, "y": 290, "width": 40, "height": 16},
+        {"text": bk, "x": 364, "y": 265, "width": 40, "height": 16},
+        {"text": tp, "x": 416, "y": 340, "width": 40, "height": 16},
+        {"text": tap, "x": 416, "y": 315, "width": 40, "height": 16},
+        {"text": tb, "x": 416, "y": 290, "width": 40, "height": 16},
+        {"text": tk, "x": 416, "y": 265, "width": 40, "height": 16},
+        {"text": na, "x": 416, "y": 243, "width": 40, "height": 16},
+    ]
+
+    create_overlay(overlay_pdf, overlays)
+
+    reader = PdfReader(input_pdf)
+    writer = PdfWriter()
+
+    overlay_reader = PdfReader(overlay_pdf)
+    overlay_page = overlay_reader.pages[0]
+
+    for page in reader.pages:
+        page.merge_page(overlay_page)
+        writer.add_page(page)
+    
+    filename = f"bap_{id_sidang}.pdf"
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    
+    with open(file_path, "wb") as output_file:
+        writer.write(output_file)
+    print(f"PDF berhasil dibuat: {output_pdf}")
 
 def get_db_connection():
     conn = sqlite3.connect('database/database.db') 
@@ -264,9 +322,9 @@ def tambah_sidang():
 
 
         cursor.execute("""
-            INSERT INTO Nilai_Pembimbing (ID_Sidang) 
-            VALUES (?)
-        """, (id_sidang,))
+            INSERT INTO Nilai_Pembimbing (ID_Sidang, nik) 
+            VALUES (?, ?)
+        """, (id_sidang, nik_pembimbing))
         conn.commit()
 
         cursor.execute("""
@@ -276,10 +334,17 @@ def tambah_sidang():
         conn.commit()
 
         cursor.execute("""
-            INSERT INTO Nilai_Penguji (ID_Sidang) 
-            VALUES (?)
+            INSERT INTO Nilai_Penguji (ID_Sidang, nik) 
+            VALUES (?, ?)
             
-        """, (id_sidang,))
+        """, (id_sidang, nik_penguji1))
+        conn.commit()
+
+        cursor.execute("""
+            INSERT INTO Nilai_Penguji (ID_Sidang, nik) 
+            VALUES (?, ?)
+            
+        """, (id_sidang, nik_penguji2))
         conn.commit()
 
         cursor.execute("""
@@ -322,6 +387,74 @@ def tambah_sidang():
     except Exception as e:
         print(f"Error adding sidang: {e}")
         return "An error occurred", 500
+
+
+@koordinator_bp.route('/update-bap/<id_sidang>', methods=['GET','POST'])
+def updateBAP(id_sidang):
+    nama = session.get('nama', None)
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT file_path FROM BAP WHERE idSidang = ?", (id_sidang,))
+    result = cursor.fetchone()
+    
+
+    if result and result['file_path'] and os.path.exists(result['file_path']):
+        cursor.execute("SELECT * FROM NilaiMahasiswa WHERE ID_Sidang = ?", (id_sidang,))
+        nilai_mahasiswa = cursor.fetchone()
+        id_sidang = nilai_mahasiswa[0]
+        nilai_tata_tulis_penguji1 = nilai_mahasiswa[1]
+        nilai_kelengkapan_materi_penguji1 = nilai_mahasiswa[2]
+        nilai_pencapaian_tujuan_penguji1 = nilai_mahasiswa[3]
+        nilai_penguasaan_materi_penguji1 = nilai_mahasiswa[4]
+        nilai_presentasi_penguji1 = nilai_mahasiswa[5]
+        nilai_tata_tulis_penguji2 = nilai_mahasiswa[6]
+        nilai_kelengkapan_materi_penguji2 = nilai_mahasiswa[7]
+        nilai_pencapaian_tujuan_penguji2 = nilai_mahasiswa[8]
+        nilai_penguasaan_materi_penguji2 = nilai_mahasiswa[9]
+        nilai_presentasi_penguji2 = nilai_mahasiswa[10]
+        nilai_tata_tulis_pembimbing = nilai_mahasiswa[16]
+        nilai_kelengkapan_materi_pembimbing = nilai_mahasiswa[17]
+        nilai_proses_bimbingan_pembimbing = nilai_mahasiswa[18]
+        nilai_penguasaan_materi_pembimbing = nilai_mahasiswa[19]
+        nilai_koordinator = nilai_mahasiswa[20]
+
+        cursor.execute("SELECT * FROM bobot_pertahun_ajaran WHERE ID_Tahun_Ajaran IN (SELECT ID_Tahun_Ajaran FROM Sidang WHERE ID_Sidang = ?)", (id_sidang,))
+        bobot = cursor.fetchone()
+
+        bobot_koor = bobot[1]
+
+        bobot_penguji = bobot[2]
+        bobot_tata_tulis_penguji = bobot[3]
+        bobot_kelengkapan_materi_penguji = bobot[4]
+        bobot_pencapaian_tujuan_penguji = bobot[5]
+        bobot_penguasaan_materi_penguji = bobot[6]
+        bobot_presentasi_penguji = bobot[7]
+
+        bobot_pembimbing = bobot[8]
+        bobot_tata_tulis_pembimbing = bobot[9]
+        bobot_kelengkapan_materi_pembimbing = bobot[10]
+        bobot_proses_bimbingan_pembimbing = bobot[11]
+        bobot_penguasaan_materi_pembimbing = bobot[12]
+
+        np = nilai_tata_tulis_penguji1*bobot_tata_tulis_penguji + nilai_kelengkapan_materi_penguji1*bobot_kelengkapan_materi_penguji + nilai_pencapaian_tujuan_penguji1 * bobot_pencapaian_tujuan_penguji + nilai_penguasaan_materi_penguji1 * bobot_penguasaan_materi_penguji + nilai_presentasi_penguji1 * bobot_presentasi_penguji
+        nap = nilai_tata_tulis_penguji2*bobot_tata_tulis_penguji + nilai_kelengkapan_materi_penguji2*bobot_kelengkapan_materi_penguji + nilai_pencapaian_tujuan_penguji2 * bobot_pencapaian_tujuan_penguji + nilai_penguasaan_materi_penguji2 * bobot_penguasaan_materi_penguji + nilai_presentasi_penguji2 * bobot_presentasi_penguji
+        nb = nilai_tata_tulis_pembimbing * bobot_tata_tulis_pembimbing + nilai_kelengkapan_materi_pembimbing*bobot_kelengkapan_materi_pembimbing + nilai_proses_bimbingan_pembimbing * bobot_proses_bimbingan_pembimbing + nilai_penguasaan_materi_pembimbing * bobot_penguasaan_materi_pembimbing
+        nk = nilai_koordinator
+        bp = (bobot_penguji/2)
+        bap = (bobot_penguji/2)
+        bb = bobot_pembimbing
+        bk = bobot_koor
+        tp = np * bp
+        tap = nap * bap
+        tb = nb * bb
+        tk = nk * bk
+        na = tp + tap + tb + tk
+        update_bap(id_sidang, np, nap, nb, nk, bp, bap, bb, bk, tp, tap, tb, tk, na)
+    
+    cursor.execute("UPDATE Sidang SET nilai_total = ? WHERE ID_Sidang = ?", (na, id_sidang,))
+    conn.commit()
+
+    return redirect(url_for('koordinator.bap'))
 
 
 @koordinator_bp.route('/pengaturan_waktu_dan_lokasi', methods=['GET', 'POST'])
@@ -693,8 +826,21 @@ def get_bap(id_sidang):
         WHERE b.idSidang = ?
     """, (id_sidang,))
     result = cursor.fetchone()
+
+    cursor.execute("""
+        SELECT total_nilai
+        FROM NilaiMahasiswa
+        WHERE ID_Sidang = ?
+    """, (id_sidang,))
+    total_nilai = cursor.fetchone()
+
+    if total_nilai is not None:
+        total_nilai = total_nilai[0]
+    else:
+        total_nilai = None
     
     response = {
+        'total_nilai': None,
         'file_path': None,
         'can_upload': True
     }
@@ -702,6 +848,7 @@ def get_bap(id_sidang):
     if result:
         if result['file_path'] and os.path.exists(result['file_path']):
             response['file_path'] = result['file_path']
+            response['total_nilai'] = total_nilai
     
     return jsonify(response)
 

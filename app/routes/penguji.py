@@ -110,14 +110,8 @@ def nilai():
 
             conn = get_db_connection()
             cursor = conn.cursor()
-            cursor.execute("select * from nilai_penguji where nik = ? and id_sidang = ?", (nik, session['id_sidang'],))
-            if(cursor.fetchone() == None):
-                cursor.execute("insert into nilai_penguji (tata_tulis, kelengkapan_materi, pencapaian_tujuan, penguasaan_materi, presentasi, nik, id_sidang) values (?, ?, ?, ?, ?, ?, ?)", (tata_tulis, kelengkapan_materi, pencapaian_tujuan, penguasaan_materi, presentasi, nik, session['id_sidang']))
-                conn.commit()
-                session.pop('id_sidang', None)
-            else:
-                cursor.execute("UPDATE nilai_penguji SET tata_tulis = ?, kelengkapan_materi = ?, pencapaian_tujuan = ?, penguasaan_materi = ?, presentasi = ? WHERE nik = ? and ID_Sidang = ?", (tata_tulis, kelengkapan_materi, pencapaian_tujuan, penguasaan_materi, presentasi, nik, session['id_sidang']))
-                conn.commit()
+            cursor.execute("UPDATE nilai_penguji SET tata_tulis = ?, kelengkapan_materi = ?, pencapaian_tujuan = ?, penguasaan_materi = ?, presentasi = ? WHERE nik = ? and ID_Sidang = ?", (tata_tulis, kelengkapan_materi, pencapaian_tujuan, penguasaan_materi, presentasi, nik, session['id_sidang']))
+            conn.commit()
             cursor.execute("select * from InfoSidang where nik_penguji = ?", (nik,))
             info = cursor.fetchall()
             return render_template('penguji/penguji-inputnilai.html', nama = nama, info=info)
