@@ -104,7 +104,7 @@ def bap():
     
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM InfoSidang WHERE nik_penguji = ?", (nik,))
+    cursor.execute("SELECT * FROM InfoSidang WHERE nik_penguji = ? OR nik_penguji2 = ?", (nik,nik,))
     info = cursor.fetchall()
     
     return render_template('penguji/penguji-bap.html', nama=nama, info=info)
@@ -114,7 +114,9 @@ def upload_bap():
     try:
         print('uploading...')
         id_sidang = request.form.get('id_sidang')
-        
+        nik = session.get('id', None)
+        print('nik saat ini :')
+        print(nik)
         # Cek status penguji di tabel BAP
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -146,11 +148,29 @@ def upload_bap():
             
             if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
                 # Update status penguji di tabel BAP
-                cursor.execute("""
-                    UPDATE BAP 
-                    SET file_path = ?, status_penguji = 'sudah'
-                    WHERE idSidang = ?
-                """, (file_path, id_sidang))
+                cursor.execute('''
+                    Select * 
+                    FROM Sidang 
+                    WHERE ID_Sidang = ?
+                ''',(id_sidang,))
+                sidang=cursor.fetchone()
+                if(nik==sidang['nik_penguji']):
+                    print("dia penguji 1")
+                    cursor.execute("""
+                        UPDATE BAP 
+                        SET file_path = ?, status_penguji1 = 'sudah'
+                        WHERE idSidang = ?
+                    """, (file_path, id_sidang))
+                    cursor.fetchone()
+                else:
+                    print('dia penguji 2')
+                    cursor.execute("""
+                        UPDATE BAP 
+                        SET file_path = ?, status_penguji2 = 'sudah'
+                        WHERE idSidang = ?
+                    """, (file_path, id_sidang))
+                    cursor.fetchone()
+
                 conn.commit()
                 flash('File berhasil diupload')
             else:
