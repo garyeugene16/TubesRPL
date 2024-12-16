@@ -176,6 +176,9 @@ def nilai():
             'nilai_detail': nilai_dict
         })
 
+    print(nilai_detail)
+    print("tes")
+
     # Jika tidak, render template HTML
     return render_template(
         'mahasiswa/mahasiswa-nilai.html', 
