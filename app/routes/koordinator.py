@@ -6,11 +6,89 @@ import os
 from flask import Blueprint, Flask, render_template, send_from_directory, session, redirect, url_for, request
 import sqlite3
 from werkzeug.utils import secure_filename
+from PyPDF2 import PdfReader, PdfWriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from datetime import datetime
+
 
 UPLOAD_FOLDER = 'uploads/bap'
 ALLOWED_EXTENSIONS = {'pdf'}
 
 koordinator_bp = Blueprint('koordinator', __name__)
+
+def tambah_bap(id_sidang, npm_mahasiswa, judul_ta, nama_mahasiswa, nama_penguji_1, nama_penguji_2, nama_pembimbing, tanggal, bulan, tahun):
+    def create_overlay(output_path, overlays):
+        c = canvas.Canvas(output_path, pagesize=letter)
+        c.setFont("Helvetica-Bold", 12)
+
+        for overlay in overlays:
+            text = overlay['text']
+            x = overlay['x']
+            y = overlay['y']
+            width = overlay['width']
+            height = overlay['height']
+            
+            # c.rect(x, y, width, height)
+            c.setFillColorRGB(0.235, 0.235, 0.235)
+            c.drawString(x + 5, y + height - 15, text)
+        
+        c.save()
+
+
+    template_path = os.path.join("uploads", "bap_template.pdf")
+
+    input_pdf = template_path
+    overlay_pdf = "overlay.pdf"
+    output_pdf = "hasil.pdf"
+
+    overlays = [
+        {"text": npm_mahasiswa, "x": 76, "y": 562.5, "width": 110, "height": 16},
+        {"text": nama_mahasiswa, "x": 270, "y": 562.9, "width": 300, "height": 16},
+        {"text": judul_ta, "x": 76, "y": 540.8, "width": 495, "height": 16},
+        {"text": nama_pembimbing, "x": 270, "y": 510.8, "width": 495, "height": 16},
+        {"text": "__", "x": 270, "y": 498.8, "width": 495, "height": 16},
+        {"text": nama_penguji_1, "x": 270, "y": 479, "width": 495, "height": 16},
+        {"text": nama_penguji_2, "x": 270, "y": 462.7, "width": 495, "height": 16},
+        # {"text": "NP", "x": 311, "y": 340, "width": 40, "height": 16},
+        # {"text": "NAP", "x": 311, "y": 315, "width": 40, "height": 16},
+        # {"text": "NB", "x": 311, "y": 290, "width": 40, "height": 16},
+        # {"text": "NK", "x": 311, "y": 265, "width": 40, "height": 16},
+        # {"text": "BP", "x": 363, "y": 340, "width": 40, "height": 16},
+        # {"text": "BAP", "x": 363, "y": 315, "width": 40, "height": 16},
+        # {"text": "BB", "x": 363, "y": 290, "width": 40, "height": 16},
+        # {"text": "BK", "x": 363, "y": 265, "width": 40, "height": 16},
+        # {"text": "TP", "x": 415, "y": 340, "width": 40, "height": 16},
+        # {"text": "TAP", "x": 415, "y": 315, "width": 40, "height": 16},
+        # {"text": "TB", "x": 415, "y": 290, "width": 40, "height": 16},
+        # {"text": "TK", "x": 415, "y": 265, "width": 40, "height": 16},
+        {"text": "100%", "x": 363, "y": 243, "width": 40, "height": 16},
+        # {"text": "NA", "x": 415, "y": 243, "width": 40, "height": 16},
+        {"text": tanggal, "x": 309, "y": 191, "width": 30, "height": 16},
+        {"text": bulan, "x": 346, "y": 191, "width": 30, "height": 16},
+        {"text": tahun, "x": 383, "y": 191, "width": 30, "height": 16},
+    ]
+
+    create_overlay(overlay_pdf, overlays)
+
+    reader = PdfReader(input_pdf)
+    writer = PdfWriter()
+
+    overlay_reader = PdfReader(overlay_pdf)
+    overlay_page = overlay_reader.pages[0]
+
+    for page in reader.pages:
+        page.merge_page(overlay_page)
+        writer.add_page(page)
+    
+    filename = f"bap_{id_sidang}.pdf"
+    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    
+    with open(file_path, "wb") as output_file:
+        writer.write(output_file)
+    print(f"PDF berhasil dibuat: {output_pdf}")
+
+
 
 def get_db_connection():
     conn = sqlite3.connect('database/database.db') 
@@ -140,6 +218,7 @@ def tambah_sidang():
         waktu_selesai = request.form.get('waktu_selesai')
         id_tahun_ajaran = request.form.get('id_tahun_ajaran')
         nilai_total = request.form.get('nilai_total')
+        
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -157,7 +236,50 @@ def tambah_sidang():
         cursor.execute("""
             INSERT INTO Sidang (npm, nik_penguji, nik_penguji2, nik_pembimbing, tempat_sidang, tanggal_sidang, waktu_mulai, waktu_selesai, ID_Tahun_Ajaran, nilai_total, status) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active')
-        """, (npm_mahasiswa, nik_penguji1, nik_penguji2, nik_pembimbing, tempat_sidang, tanggal_sidang, waktu_mulai, waktu_selesai, id_tahun_ajaran, nilai_total))
+        """, (npm_mahasiswa, nik_penguji1, nik_penguji2, nik_pembimbing, tempat_sidang, tanggal_sidang, waktu_mulai, waktu_selesai, id_tahun_ajaran, nilai_total,))
+        conn.commit()
+
+        cursor.execute("""
+            SELECT nama
+            FROM Mahasiswa 
+            WHERE npm = ?
+        """, (npm_mahasiswa,))
+        nama_mahasiswa = cursor.fetchall()[0][0]
+
+        cursor.execute("""
+            SELECT MAX(ID_Sidang)
+            FROM Sidang 
+        """, ())
+        id_sidang = cursor.fetchall()[0][0]
+        print('id sidangnya adalah ' + str(id_sidang))
+
+        filename = f"bap_{id_sidang}.pdf"
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+
+        cursor.execute("""
+            INSERT INTO BAP (idSidang, status_koordinator, status_penguji1, status_penguji2, status_pembimbing, status_mahasiswa, file_path) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (id_sidang, 'belum', 'belum', 'belum', 'belum', 'belum', file_path,))
+        conn.commit()
+
+
+        cursor.execute("""
+            INSERT INTO Nilai_Pembimbing (ID_Sidang) 
+            VALUES (?)
+        """, (id_sidang,))
+        conn.commit()
+
+        cursor.execute("""
+            INSERT INTO Nilai_Koordinator (ID_Sidang) 
+            VALUES (?)
+        """, (id_sidang,))
+        conn.commit()
+
+        cursor.execute("""
+            INSERT INTO Nilai_Penguji (ID_Sidang) 
+            VALUES (?)
+            
+        """, (id_sidang,))
         conn.commit()
 
         cursor.execute("""
@@ -167,8 +289,34 @@ def tambah_sidang():
         """, (judul_ta, jenis_ta, npm_mahasiswa))
         conn.commit()
 
-        conn.close()
+        cursor.execute("""
+            SELECT MAX(ID_Sidang)
+            FROM Sidang 
+        """, ())
+        id_sidang = cursor.fetchall()[0][0]
+        print('id sidangnya adalah ' + str(id_sidang))
 
+        cursor.execute("select nama from Penguji where nik = ?", (nik_penguji1,))
+        nama_penguji_1 = cursor.fetchall()[0][0]
+
+        cursor.execute("select nama from Penguji where nik = ?", (nik_penguji2,))
+        nama_penguji_2 = cursor.fetchall()[0][0]
+
+        cursor.execute("select nama from Pembimbing where nik = ?", (nik_pembimbing,))
+        nama_pembimbing = cursor.fetchall()[0][0]
+
+        now = datetime.now()
+
+        tanggal = now.day
+        bulan = now.month
+        tahun = now.year
+
+        formatted_date = f"{tanggal:02d}"
+        formatted_month = f"{bulan:02d}"
+        formatted_year = f"{tahun}"
+
+
+        tambah_bap(id_sidang, npm_mahasiswa, judul_ta, nama_mahasiswa, nama_penguji_1, nama_penguji_2, nama_pembimbing, formatted_date, formatted_month, formatted_year)
         return redirect(url_for('koordinator.info')) 
 
     except Exception as e:
@@ -248,27 +396,54 @@ def pengaturan_nilai():
         all_bobot = cursor.fetchall()
         cursor.execute("SELECT * FROM bobot_pertahun_ajaran where id_tahun_ajaran IN (SELECT id_tahun_ajaran FROM Sidang WHERE status = 'active')")
         bobots = cursor.fetchall()
+        print(bobots)
 
 
+        if(len(bobots) == 0):
+            bobots =[
+                        {
+                        "ID_Tahun_Ajaran": 0,
+                        "bobot_penguji": 0,
+                        "bobot_koordinator": 0,
+                        "tata_tulis_penguji": 0,
+                        "kelengkapan_materi_penguji": 0,
+                        "pencapaian_tujuan_penguji": 0,
+                        "penguasaan_materi_penguji": 0,
+                        "presentasi_penguji": 0,
+                        "bobot_pembimbing": 0,
+                        "tata_tulis_pembimbing": 0,
+                        "kelengkapan_materi_pembimbing": 0,
+                        "proses_bimbingan_pembimbing": 0,   
+                        "penguasaan_materi_pembimbing": 0
+                        }
+                    ]
         print(bobots)
         bobot = [
-                {
-                    "id_tahun_ajaran": row["ID_Tahun_Ajaran"],  # Mengakses dengan nama kolom (pastikan nama cocok)
-                    "bobot_penguji": row["bobot_penguji"] * 100,
-                    "bobot_koordinator": row["bobot_koordinator"] * 100,
-                    "tata_tulis_penguji": row["tata_tulis_penguji"] * 100,
-                    "kelengkapan_materi_penguji": row["kelengkapan_materi_penguji"] * 100,
-                    "pencapaian_tujuan_penguji": row["pencapaian_tujuan_penguji"] * 100,
-                    "penguasaan_materi_penguji": row["penguasaan_materi_penguji"] * 100,
-                    "presentasi_penguji": row["presentasi_penguji"] * 100,
-                    "bobot_pembimbing": row["bobot_pembimbing"] * 100,
-                    "tata_tulis_pembimbing": row["tata_tulis_pembimbing"] * 100,
-                    "kelengkapan_materi_pembimbing": row["kelengkapan_materi_pembimbing"] * 100,
-                    "proses_bimbingan_pembimbing": row["proses_bimbingan_pembimbing"] * 100,
-                    "penguasaan_materi_pembimbing": row["penguasaan_materi_pembimbing"] * 100
-                }
-                for row in bobots
-            ]
+                    {
+                        "id_tahun_ajaran": row["ID_Tahun_Ajaran"],  # Mengakses dengan nama kolom (pastikan nama cocok)
+                        "bobot_penguji": row["bobot_penguji"] * 100,
+                        "bobot_koordinator": row["bobot_koordinator"] * 100,
+                        "tata_tulis_penguji": row["tata_tulis_penguji"] * 100,
+                        "kelengkapan_materi_penguji": row["kelengkapan_materi_penguji"] * 100,
+                        "pencapaian_tujuan_penguji": row["pencapaian_tujuan_penguji"] * 100,
+                        "penguasaan_materi_penguji": row["penguasaan_materi_penguji"] * 100,
+                        "presentasi_penguji": row["presentasi_penguji"] * 100,
+                        "bobot_pembimbing": row["bobot_pembimbing"] * 100,
+                        "tata_tulis_pembimbing": row["tata_tulis_pembimbing"] * 100,
+                        "kelengkapan_materi_pembimbing": row["kelengkapan_materi_pembimbing"] * 100,
+                        "proses_bimbingan_pembimbing": row["proses_bimbingan_pembimbing"] * 100,
+                        "penguasaan_materi_pembimbing": row["penguasaan_materi_pembimbing"] * 100
+                    }
+                    for row in bobots
+                ]
+        print(nama)
+        print(info)
+        print(nilais)
+        print(id_sidang_in_nilai)
+        print(nik)
+        print(all_bobot)
+        print(bobot)
+        print(bobots)
         return render_template('koordinator/koordinator-pengaturan.html', nama = nama, info=info, nilai=nilais, id_sidang_in_nilai=id_sidang_in_nilai, nik=nik, bobot=bobot, bobots = all_bobot)
     else:
         if(request.is_json):

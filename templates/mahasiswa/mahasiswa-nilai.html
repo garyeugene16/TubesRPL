@@ -74,7 +74,6 @@
               <td>{{ nilai_detail.nilai_tata_tulis_penguji }}</td>
               <td>{{ nilai_detail.nilai_tata_tulis_pembimbing }}</td>
               <td rowspan="6">{{ nilai_detail.nilai_koordinator }}</td>
-              <!-- <td rowspan="6">{{ nilai_detail.total_nilai | round(2) }}</td> -->
               <td rowspan="6">
                 {% if nilai_detail.total_nilai is not none %}
                   {{ nilai_detail.total_nilai | round(2) }}
