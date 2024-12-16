@@ -46,8 +46,9 @@
         <div class="welcome-box">Nilai Sidang</div>
         <select id="tahunAjaranSelect" name="tahun_ajaran">
           {% for tahun in bobots %}
-            <option value="{{ tahun.id_tahun_ajaran }}" {% if tahun_ajaran == tahun.id_tahun_ajaran %}selected{% endif %}>
-              {{ tahun.id_tahun_ajaran + 2018 }} / {{ tahun.id_tahun_ajaran + 2019 }}
+            <option value="{{ tahun.ID_Tahun_Ajaran }}" 
+              {% if tahun_ajaran == tahun.ID_Tahun_Ajaran %}selected{% endif %}>
+              {{ tahun.tahun_ajaran }}
             </option>
           {% endfor %}
         </select>
