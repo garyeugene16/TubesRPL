@@ -76,7 +76,15 @@ def nilai():
     nama = session.get('nama', None)
     role = session.get('role', None)
     
-    bobots = conn.execute('SELECT * FROM Bobot_PerTahun_Ajaran').fetchall()
+    # bobots = conn.execute('SELECT * FROM Bobot_PerTahun_Ajaran').fetchall()
+    bobots = conn.execute('''
+        SELECT DISTINCT 
+            b.ID_Tahun_Ajaran, 
+            (2018 + b.ID_Tahun_Ajaran) || '/' || (2019 + b.ID_Tahun_Ajaran) AS tahun_ajaran
+        FROM Bobot_PerTahun_Ajaran b
+        JOIN Sidang s ON b.ID_Tahun_Ajaran = s.ID_Tahun_Ajaran
+        WHERE s.npm = ?
+    ''', (npm,)).fetchall()
 
     
     # # Ambil informasi sidang
@@ -301,6 +309,13 @@ def upload_bap():
             SET file_path = ?, status_mahasiswa = 'sudah'
             WHERE idSidang = ?
         ''', (file_path, id_sidang))
+        
+        cursor.execute('''
+            UPDATE Sidang 
+            SET status = 'selesai'
+            WHERE idSidang = ?
+        ''', (id_sidang))
+        
     else:
         # Jika pembimbing belum menandatangani, beri pesan error
         return "BAP belum ditandatangani oleh pembimbing", 400
