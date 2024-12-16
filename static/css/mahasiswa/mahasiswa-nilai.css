@@ -22,7 +22,7 @@ body {
     color: #2d89ef;
   }
 
-  table{
+  .content table{
     font-size: 20px;
   }
   
@@ -128,31 +128,31 @@ body {
   
   /* Calendar */
   .calendar {
-    background: #1c1c1c;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background: #1c1c1c !important;
+    padding: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
   }
   
   .calendar .user {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
+    display: flex !important;
+    align-items: center !important;
+    margin-bottom: 20px !important;
   }
   
   .calendar .user img {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin-right: 10px;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    margin-right: 10px !important;
   }
   
   .calendar .notification {
-    margin-bottom: 20px;
+    margin-bottom: 20px !important;
   }
   
   .calendar .cal-wrapper {
-    text-align: center;
+    text-align: center !important;
   }
   
