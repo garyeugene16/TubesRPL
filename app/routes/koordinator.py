@@ -444,50 +444,67 @@ def bap():
 def upload_bap():
     try:
         id_sidang = request.form.get('id_sidang')
-        
-        # Cek status penguji di tabel BAP
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
+
+        # Cek apakah file diunggah
         if 'bap' not in request.files:
             flash('Tidak ada file yang dipilih')
             return redirect(url_for('koordinator.bap'))
-        
+
         file = request.files['bap']
-        
+
         if file.filename == '':
             flash('Tidak ada file yang dipilih')
             return redirect(url_for('koordinator.bap'))
-        
+
         if file and allowed_file(file.filename):
+            conn = get_db_connection()
+            cursor = conn.cursor()
+
+            # Buat folder upload jika belum ada
             if not os.path.exists(UPLOAD_FOLDER):
                 os.makedirs(UPLOAD_FOLDER)
-            # rename file bap
+
+            # Rename file menjadi format yang diinginkan
             filename = f"bap_{id_sidang}.pdf"
             file_path = os.path.join(UPLOAD_FOLDER, filename)
-            
+
+            # Simpan file ke folder tujuan
             file.save(file_path)
-            
-            if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
-                # Update status pembimbing di tabel BAP
+
+            # Cek apakah data BAP untuk sidang ini sudah ada
+            existing_bap = cursor.execute("""
+                SELECT 1 FROM BAP WHERE idSidang = ?
+            """, (id_sidang,)).fetchone()
+
+            if existing_bap:
+                # Jika data sudah ada, lakukan UPDATE
                 cursor.execute("""
                     UPDATE BAP 
                     SET file_path = ?, status_koordinator = 'sudah'
                     WHERE idSidang = ?
                 """, (file_path, id_sidang))
-                conn.commit()
-                flash('File berhasil diupload')
+            else:
+                # Jika data belum ada, lakukan INSERT
+                cursor.execute("""
+                    INSERT INTO BAP (idSidang, file_path, status_koordinator)
+                    VALUES (?, ?, 'sudah')
+                """, (id_sidang, file_path))
+
+            conn.commit()
+
+            if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
+                flash('File berhasil diupload dan data berhasil diperbarui')
             else:
                 flash('Gagal menyimpan file')
-                
+
         return redirect(url_for('koordinator.bap'))
-    
+
     except Exception as e:
         print(f"Error: {str(e)}")
         flash('Terjadi kesalahan saat upload file')
         return redirect(url_for('koordinator.bap'))
     finally:
-        if conn:
+        if 'conn' in locals() and conn:
             conn.close()
 
 @koordinator_bp.route('/get-bap/<id_sidang>')

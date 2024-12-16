@@ -11,6 +11,9 @@ from app.routes.pembimbing import pembimbing_bp
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
+import os
+UPLOAD_FOLDER = os.path.join(os.path.dirname(app.root_path), 'uploads', 'bap')
+
 
 app.register_blueprint(mahasiswa_bp, url_prefix='/mahasiswa')
 app.register_blueprint(koordinator_bp, url_prefix='/koordinator')

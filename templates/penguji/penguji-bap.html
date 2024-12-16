@@ -6,13 +6,31 @@
     <title>BAP - Berita Acara Sidang</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/penguji/penguji-bap.css') }}">
     <script>
-        function selectMahasiswa(name, npm, topic, supervisor, examiners) {
+        function selectMahasiswa(name, npm, topic, supervisor, examiners, id_sidang) {
             const studentList = document.getElementById('student-list');
             const bapContainer = document.querySelector('.bap-container');
-
+            const npm_hidden = document.getElementById('npm_hidden');
+            const npm_hidden2 = document.getElementById('npm_hidden2');
 
             studentList.style.display = 'none';
             bapContainer.classList.add('active');
+            npm_hidden.value = npm;
+            npm_hidden2.value = npm;
+
+            fetch('/penguji/bap', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ npm: npm, id_sidang: id_sidang }),
+                  })
+                  .then(response => response.json())
+                  .then(data => {
+                    console.log('Response from server:', data);
+                  })
+                  .catch(error => {
+                      console.error('Error:', error);
+                  });
         }
 
         function backToStudentList() {
@@ -40,7 +58,7 @@
             <div id="student-list">
                 <h2>Pilih Mahasiswa</h2>
                 {% for sidang in info %}
-                <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.npm_mahasiswa}}','AI in Healthcare', 'Dr. Smith', 'Prof. Johnson')">{{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}</div>
+                <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.npm_mahasiswa}}','{{sidang.judul_ta}}', '{{sidang.nama_pembimbing}}', '{{sidang.nama_penguji}}', '{{sidang.ID_Sidang}}')">{{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}</div>
                 {% endfor %}
             </div>
 
@@ -49,11 +67,29 @@
                 <!-- <div class="content-header">
                     <h2>BAP (Berita Acara Sidang)</h2>
                 </div> -->
+                <div id="bap-info"></div>
                 <div class="bap-content">
                     <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
+                    <!-- <embed id="pdf-embed" 
+                        type="application/pdf"
+                        width="100%"
+                        height="600px"
+                        src="localhost:8080/uploads/bap/bap_1.pdf"> -->
                     <div id="tombol">
                         <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
-                        <button type="button" class="agree-btn" onclick="agreeAction()">Setuju</button>
+                        <!-- <button type="button" class="agree-btn" onclick="agreeAction()">Setuju</button> -->
+                         <div id="file">
+                            <form action="{{ url_for('penguji.upload_bap') }}" method="POST" enctype="multipart/form-data">
+                                <input id="input_file" type="file" name="bap_file" required>
+                                <input id="npm_hidden" hidden value="" name="npm_hidden">
+                                <button type="submit" class="btn-upload">Unggah</button>
+                              </form>
+                            
+                            <form action="{{ url_for('penguji.unduh_bap') }}" method="POST">
+                                <button id="unduh_button" type="submit" class="btn-unduh">Unduh</button>
+                                <input id="npm_hidden2" hidden value="" name="npm_hidden">
+                            </form>
+                         </div>
                     </div>
                 </div>
             </div>
