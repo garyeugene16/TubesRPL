@@ -219,7 +219,7 @@
                 <select onchange="cekTahunAjaran()" id="tahun-ajaran" name="tahun-ajaran">
                     <option id="0" value="0">Tahun Ajaran Baru</option>
                     {% for tahun in bobots %}
-                    <option id="{{tahun.id_tahun_ajaran}}" value="{{tahun.id_tahun_ajaran}}">{{tahun.id_tahun_ajaran}} - {{1 + tahun.id_tahun_ajaran}}</option>
+                    <option id="{{tahun.id_tahun_ajaran}}" value="{{tahun.id_tahun_ajaran}}">{{2018 + tahun.id_tahun_ajaran}} - {{1 + tahun.id_tahun_ajaran + 2018}}</option>
                     {% endfor %}
                 </select>
                 <label for="koordinator">Dosen Koordinator</label>

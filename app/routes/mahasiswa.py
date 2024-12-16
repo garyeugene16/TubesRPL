@@ -202,7 +202,7 @@ def bap():
         WHERE idSidang IN (SELECT ID_Sidang FROM Sidang WHERE npm = ? and status = ?)
     ''', (npm, 'active'))
     bap_data = cursor.fetchone()
-
+    print(bap_data)
     conn.close()
     
     # Jika BAP ditemukan, tampilkan data, jika tidak, beri notifikasi
@@ -293,6 +293,12 @@ def upload_bap():
             SET file_path = ?, status_mahasiswa = 'sudah'
             WHERE idSidang = ?
         ''', (file_path, id_sidang))
+
+        cursor.execute('''
+            UPDATE Sidang 
+            SET status = 'selesai'
+            WHERE idSidang = ?
+        ''', (id_sidang,))
     else:
         # Jika pembimbing belum menandatangani, beri pesan error
         return "BAP belum ditandatangani oleh pembimbing", 400

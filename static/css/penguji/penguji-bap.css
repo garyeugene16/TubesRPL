@@ -10,9 +10,19 @@ body {
   height: 100vh;
 }
 
+#file{
+  display: flex;
+  margin-left: auto;
+  gap: 5px;
+}
+
 #bapLink{
   background: #2d89ef;
   border-radius: 10px;
+}
+
+#input_file{
+  width: 200px;
 }
 
 #home {
@@ -35,6 +45,10 @@ body {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+#unduh_button{
+  margin-left: 20px;
 }
 
 .sidebar .menu {
