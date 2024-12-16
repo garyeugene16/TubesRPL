@@ -5,98 +5,177 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BAP - Berita Acara Sidang</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/penguji/penguji-bap.css') }}">
-    <script>
-        function selectMahasiswa(name, npm, topic, supervisor, examiners, id_sidang) {
-            const studentList = document.getElementById('student-list');
-            const bapContainer = document.querySelector('.bap-container');
-            const npm_hidden = document.getElementById('npm_hidden');
-            const npm_hidden2 = document.getElementById('npm_hidden2');
-
-            studentList.style.display = 'none';
-            bapContainer.classList.add('active');
-            npm_hidden.value = npm;
-            npm_hidden2.value = npm;
-
-            fetch('/penguji/bap', {
-                      method: 'POST',
-                      headers: {
-                          'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ npm: npm, id_sidang: id_sidang }),
-                  })
-                  .then(response => response.json())
-                  .then(data => {
-                    console.log('Response from server:', data);
-                  })
-                  .catch(error => {
-                      console.error('Error:', error);
-                  });
-        }
-
-        function backToStudentList() {
-            const studentList = document.getElementById('student-list');
-            const bapContainer = document.querySelector('.bap-container');
-
-            studentList.style.display = 'block';
-            bapContainer.classList.remove('active');
-        }
-
-        function agreeAction() {
-            alert("BAP disetujui!");
-        }
-    </script>
 </head>
 <body>
     <div id="home">
-        <!-- sidebar -->
         {% include 'penguji/fragment/sidebar.html' %}
 
         <div id="main-side">
             <div id="greeting">Berita Acara Sidang Skripsi</div>
 
-            <!-- Student List Section -->
             <div id="student-list">
                 <h2>Pilih Mahasiswa</h2>
                 {% for sidang in info %}
-                <div class="student-item" id="{{sidang.ID_Sidang}}" onclick="selectMahasiswa('{{sidang.nama_mahasiswa}}', '{{sidang.npm_mahasiswa}}','{{sidang.judul_ta}}', '{{sidang.nama_pembimbing}}', '{{sidang.nama_penguji}}', '{{sidang.ID_Sidang}}')">{{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}</div>
+                <div class="student-item" onclick="selectMahasiswa('{{sidang.ID_Sidang}}')">
+                    {{sidang.npm_mahasiswa}} - {{sidang.nama_mahasiswa}}
+                </div>
                 {% endfor %}
             </div>
 
-            <!-- BAP Content Section -->
             <div class="bap-container">
-                <!-- <div class="content-header">
-                    <h2>BAP (Berita Acara Sidang)</h2>
-                </div> -->
-                <div id="bap-info"></div>
                 <div class="bap-content">
-                    <img src="{{ url_for('static', filename='png/bap.png') }}" alt="BAP Image">
-                    <!-- <embed id="pdf-embed" 
-                        type="application/pdf"
-                        width="100%"
-                        height="600px"
-                        src="localhost:8080/uploads/bap/bap_1.pdf"> -->
-                    <div id="tombol">
-                        <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
-                        <!-- <button type="button" class="agree-btn" onclick="agreeAction()">Setuju</button> -->
-                         <div id="file">
-                            <form action="{{ url_for('penguji.upload_bap') }}" method="POST" enctype="multipart/form-data">
-                                <input id="input_file" type="file" name="bap_file" required>
-                                <input id="npm_hidden" hidden value="" name="npm_hidden">
-                                <button type="submit" class="btn-upload">Unggah</button>
-                              </form>
-                            
-                            <form action="{{ url_for('penguji.unduh_bap') }}" method="POST">
-                                <button id="unduh_button" type="submit" class="btn-unduh">Unduh</button>
-                                <input id="npm_hidden2" hidden value="" name="npm_hidden">
-                            </form>
-                         </div>
+                    <div id="mahasiswa-info" style="display: none;">
+                        <h4>Mahasiswa:</h4>
+                        <p id="mahasiswa-detail"></p>
                     </div>
+
+                    <div id="pdf-preview" style="display: none;">
+                        <h4>Preview BAP:</h4>
+                        <embed id="pdf-embed" 
+                               type="application/pdf"
+                               width="100%"
+                               height="600px">
+                    </div>
+
+                    <div id="bap-info"></div>
+                    
+                    <form id="bapForm" action="{{ url_for('penguji.upload_bap') }}" method="POST" enctype="multipart/form-data">
+                        <input type="hidden" id="id_sidang" name="id_sidang">
+                        
+                        <div class="file-upload">
+                            <input type="file" name="bap" id="bap" accept="application/pdf" required class="file-input">
+                            <label for="bap" class="file-label">
+                                <span class="file-icon">📄</span>
+                                <span class="file-name">Please choose file to Upload BAP</span>
+                            </label>
+                        </div>
+
+                        <div class="buttons">
+                            <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
+                            <button type="submit" class="submit-btn">Upload BAP</button>
+                            <button type="button" class="btn-unduh" onclick="downloadBap()">Unduh BAP</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
-        <!-- rightbar -->
         {% include 'penguji/fragment/rightbar.html' %}
     </div>
+
+    <script>
+        function selectMahasiswa(idSidang) {
+            document.getElementById('id_sidang').value = idSidang;
+            document.getElementById('student-list').style.display = 'none';
+            document.querySelector('.bap-container').classList.add('active');
+
+            // Ambil data mahasiswa dari elemen yang diklik
+            const studentElement = event.currentTarget;
+            const mahasiswaInfo = studentElement.textContent;
+            
+            // Tampilkan info mahasiswa
+            const mahasiswaInfoDiv = document.getElementById('mahasiswa-info');
+            const mahasiswaDetail = document.getElementById('mahasiswa-detail');
+            mahasiswaInfoDiv.style.display = 'block';
+            mahasiswaDetail.textContent = mahasiswaInfo;
+
+            // Fetch BAP info
+            fetch(`/penguji/get-bap/${idSidang}`)
+                .then(response => response.json())
+                .then(data => {
+                    const bapInfo = document.getElementById('bap-info');
+                    const pdfPreview = document.getElementById('pdf-preview');
+                    const pdfEmbed = document.getElementById('pdf-embed');
+                    const uploadForm = document.getElementById('bapForm');
+                    //jika belum disetujui pihak sebelumnya
+                    if(!data.can_upload) {
+                        bapInfo.innerHTML = `<p style="color: red;">Menunggu persetujuan dari koordinator</p>`;
+                        uploadForm.style.display = 'none';
+                        pdfPreview.style.display = 'none';
+                    
+                    } else {
+                        uploadForm.style.display = 'block';
+                        //jika sudah di setejui pihak sebelumnya dan bap sudah upload
+                        if(data.file_path) {
+                            bapInfo.innerHTML = `<p>BAP sudah diupload</p>`;
+                            pdfPreview.style.display = 'block';
+                            bapInfo.style.display = 'none';
+                            pdfEmbed.src = `/penguji/view-bap/${idSidang}`;
+                            //jika sudah disetujui tapi bap blm di upload
+                        } else {
+                            pdfPreview.style.display = 'none';
+                            pdfEmbed.style.display = 'none';
+                            bapInfo.innerHTML = `<p>BAP belum di-upload</p>`;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    const bapInfo = document.getElementById('bap-info');
+                    bapInfo.innerHTML = `<p>Terjadi kesalahan saat memuat data</p>`;
+                });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          const today = new Date();
+          const currentMonth = today.getMonth(); // Desember = 11
+          const currentYear = today.getFullYear();
+          const currentDate = today.getDate();
+  
+          // Pastikan bulan dan tahun adalah Desember 2024
+          if (currentMonth === 11 && currentYear === 2024) {
+              // Cari elemen <td> dengan data-day yang sesuai
+              const todayCell = document.querySelector(`td[data-day='${currentDate}']`);
+              if (todayCell) {
+                  todayCell.style.backgroundColor = '#2d89ef';
+                  todayCell.style.borderRadius = '50%';
+                  todayCell.style.fontWeight = 'bold';
+              }
+          }
+        });
+        function backToStudentList() {
+            document.getElementById('student-list').style.display = 'block';
+            document.querySelector('.bap-container').classList.remove('active');
+            const pdfPreview = document.getElementById('pdf-preview');
+            const pdfEmbed = document.getElementById('pdf-embed');
+            pdfPreview.style.display = 'none';
+            pdfEmbed.src = '';  // Clear PDF when going back
+        }
+
+        function downloadBap() {
+            const idSidang = document.getElementById('id_sidang').value;
+            window.location.href = `/penguji/download-bap/${idSidang}`;
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+          const today = new Date();
+          const currentMonth = today.getMonth(); // Desember = 11
+          const currentYear = today.getFullYear();
+          const currentDate = today.getDate();
+  
+          // Pastikan bulan dan tahun adalah Desember 2024
+          if (currentMonth === 11 && currentYear === 2024) {
+              // Cari elemen <td> dengan data-day yang sesuai
+              const todayCell = document.querySelector(`td[data-day='${currentDate}']`);
+              if (todayCell) {
+                  todayCell.classList.add('current-day');
+              }
+          }
+      });
+
+      // Event listener untuk perubahan file input
+      document.getElementById('bap').addEventListener('change', function(e) {
+          const fileName = e.target.files[0]?.name;
+          const fileLabel = document.querySelector('.file-label');
+          const fileText = fileLabel.querySelector('.file-name');
+          const submitBtn = document.querySelector('.submit-btn');
+          
+          if (fileName) {
+              fileLabel.classList.add('has-file');
+              submitBtn.classList.add('uploaded');
+              fileText.textContent = "File : "+fileName;
+          } else {
+              fileLabel.classList.remove('has-file');
+          }
+      });
+    </script>
 </body>
 </html>
