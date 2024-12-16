@@ -23,5 +23,8 @@ INSERT INTO Nilai_Penguji(ID_Sidang, tata_tulis, kelengkapan_materi, pencapaian_
 VALUES (9, 77, 77, 77, 77, 77, 'P001')
 
 UPDATE BAP
-SET file_path = 'uploads/bap/bap_1.pdf'
-WHERE id_bap = 1;
+SET file_path = 'uploads/bap/bap_31.pdf'
+WHERE id_bap = 20;
+
+SELECT pg_get_serial_sequence('Bobot_PerTahun_ajaran', 'ID_Tahun_Ajaran');
+

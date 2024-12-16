@@ -11,9 +11,9 @@ class TestNilaiRoute(unittest.TestCase):
 
         # Simulasikan session
         with self.app.session_transaction() as sess:
-            sess['email'] = 'siti@student.unpar.ac.id'
-            sess['id'] = 'M001'
-            sess['name'] = 'Siti Rahmawati'
+            sess['email'] = 'jason@student.unpar.ac.id'
+            sess['id'] = 'M002'
+            sess['name'] = 'Jason Agung'
             sess['password'] = '123'
             sess['role'] = 'mahasiswa'
 
@@ -53,8 +53,8 @@ class TestNilaiRoute(unittest.TestCase):
         self.assertIn('nilai_detail', response_data)
 
         # Memastikan data sidang dan nilai sesuai
-        self.assertEqual(response_data['sidang']['ID_Sidang'], 1)
-        self.assertEqual(response_data['nilai_detail']['total_nilai'], 86.3)
+        self.assertEqual(response_data['sidang']['ID_Sidang'], 31)
+        self.assertEqual(response_data['nilai_detail']['total_nilai'], 85.0)
 
 if __name__ == '__main__':
     unittest.main()

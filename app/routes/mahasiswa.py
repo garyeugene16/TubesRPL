@@ -122,31 +122,32 @@ def nilai():
             np2.pencapaian_tujuan AS nilai_pencapaian_tujuan_penguji2,
             np2.penguasaan_materi AS nilai_penguasaan_materi_penguji2,
             np2.presentasi AS nilai_presentasi_penguji2,
-            (np1.tata_tulis + np2.tata_tulis) / 2 AS nilai_tata_tulis_penguji,
-            (np1.kelengkapan_materi + np2.kelengkapan_materi) / 2 AS nilai_kelengkapan_materi_penguji,
-            (np1.pencapaian_tujuan + np2.pencapaian_tujuan) / 2 AS nilai_pencapaian_tujuan_penguji,
-            (np1.penguasaan_materi + np2.penguasaan_materi) / 2 AS nilai_penguasaan_materi_penguji,
-            (np1.presentasi + np2.presentasi) / 2 AS nilai_presentasi_penguji,
+            
             nb.tata_tulis AS nilai_tata_tulis_pembimbing,
             nb.kelengkapan_materi AS nilai_kelengkapan_materi_pembimbing,
-            nb.proses_bimbingan AS nilai_proses_bimbingan_pembimbing,
-            nb.penguasaan_materi AS nilai_penguasaan_materi_pembimbing,
+            nb.proses_bimbingan  AS nilai_proses_bimbingan_pembimbing,
+            nb.penguasaan_materi  AS nilai_penguasaan_materi_pembimbing,
+            
             nk.nilai AS nilai_koordinator,
+            
             (
-                (((np1.tata_tulis + np2.tata_tulis) / 2) * b.tata_tulis_penguji +
-                ((np1.kelengkapan_materi + np2.kelengkapan_materi) / 2) * b.kelengkapan_materi_penguji +
-                ((np1.pencapaian_tujuan + np2.pencapaian_tujuan) / 2) * b.pencapaian_tujuan_penguji +
-                ((np1.penguasaan_materi + np2.penguasaan_materi) / 2) * b.penguasaan_materi_penguji +
-                ((np1.presentasi + np2.presentasi) / 2) * b.presentasi_penguji) * b.bobot_penguji
-            ) +
-            ((nb.tata_tulis * b.tata_tulis_pembimbing +
-            nb.kelengkapan_materi * b.kelengkapan_materi_pembimbing +
-            nb.proses_bimbingan * b.proses_bimbingan_pembimbing +
-            nb.penguasaan_materi * b.penguasaan_materi_pembimbing) * b.bobot_pembimbing) +
-            (nk.nilai * b.bobot_koordinator) AS total_nilai
+                (((np1.tata_tulis + np2.tata_tulis) * b.tata_tulis_penguji) +
+                ((np1.kelengkapan_materi + np2.kelengkapan_materi) * b.kelengkapan_materi_penguji) +
+                ((np1.pencapaian_tujuan + np2.pencapaian_tujuan) * b.pencapaian_tujuan_penguji) +
+                ((np1.penguasaan_materi + np2.penguasaan_materi) * b.penguasaan_materi_penguji) +
+                ((np1.presentasi + np2.presentasi) * b.presentasi_penguji)) * (b.bobot_penguji/2) +
+
+                (nb.tata_tulis * b.tata_tulis_pembimbing + 
+                nb.kelengkapan_materi * b.kelengkapan_materi_pembimbing + 
+                nb.proses_bimbingan * b.proses_bimbingan_pembimbing + 
+                nb.penguasaan_materi * b.penguasaan_materi_pembimbing) * b.bobot_pembimbing +
+
+                (nk.nilai * b.bobot_koordinator)
+            ) AS total_nilai
+            
         FROM Sidang s
         JOIN Nilai_Penguji np1 ON np1.ID_Sidang = s.ID_Sidang
-        JOIN Nilai_Penguji np2 ON np2.ID_Sidang = s.ID_Sidang
+        JOIN Nilai_Penguji np2 ON np2.ID_Sidang = s.ID_Sidang AND np2.ID_Nilai_Penguji != np1.ID_Nilai_Penguji
         JOIN Nilai_Pembimbing nb ON nb.ID_Sidang = s.ID_Sidang
         JOIN Nilai_Koordinator nk ON nk.id_sidang = s.ID_Sidang
         JOIN Bobot_PerTahun_Ajaran b ON s.ID_Tahun_Ajaran = b.ID_Tahun_Ajaran

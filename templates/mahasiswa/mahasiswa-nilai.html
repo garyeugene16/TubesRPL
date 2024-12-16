@@ -4,19 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sidang Akhir</title>
-  <!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/mahasiswa/mahasiswa-nilai.css') }}"> -->
   <link rel="stylesheet" href="../../static/css/mahasiswa/mahasiswa-nilai.css">
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const selectElement = document.getElementById('tahunAjaranSelect');
-      // Mengatur nilai yang terpilih jika sudah ada di URL
       const tahunAjaranId = new URLSearchParams(window.location.search).get('tahun_ajaran');
       if (tahunAjaranId) {
         selectElement.value = tahunAjaranId;
       }
       selectElement.addEventListener('change', function() {
         const tahunAjaranId = this.value;
-        console.log("Tahun Ajaran yang dipilih:", tahunAjaranId);  // Debugging log
+        console.log("Tahun Ajaran yang dipilih:", tahunAjaranId);
         window.location.href = `?tahun_ajaran=${tahunAjaranId}`;
       });
     });
@@ -24,25 +22,11 @@
 </head>
 <body>
   <div class="container">
-    <!-- Sidebar -->
     {% include 'mahasiswa/fragment/sidebar.html' %}
 
-    <!-- Main Content -->
     <main class="content">
       <header class="header">
-        <div class="welcome-box">
-          Nilai Sidang
-        </div>
-        <!-- <select>
-          <option>GANJIL 2024/2025</option>
-        </select> -->
-        <!-- <select id="tahunAjaranSelect" name="tahun_ajaran" onchange="location.href='?tahun_ajaran=' + this.value;">
-          {% for tahun in bobots %}
-            <option value="{{ tahun.id_tahun_ajaran }}" {% if tahun_ajaran == tahun.id_tahun_ajaran %}selected{% endif %}>
-              {{ tahun.id_tahun_ajaran + 2018 }} / {{ tahun.id_tahun_ajaran + 2019 }}
-            </option>
-          {% endfor %}
-        </select> -->
+        <div class="welcome-box">Nilai Sidang</div>
         <select id="tahunAjaranSelect" name="tahun_ajaran">
           {% for tahun in bobots %}
             <option value="{{ tahun.id_tahun_ajaran }}" {% if tahun_ajaran == tahun.id_tahun_ajaran %}selected{% endif %}>
@@ -50,17 +34,16 @@
             </option>
           {% endfor %}
         </select>
-        
       </header>
       
       {% if sidang and nilai_detail %}
-        <!-- Tabel Nilai -->
         <table>
           <thead>
             <tr>
               <th>No.</th>
               <th>Detail Nilai</th>
-              <th>Nilai Penguji</th>
+              <th>Nilai Penguji 1</th>
+              <th>Nilai Penguji 2</th>
               <th>Nilai Pembimbing</th>
               <th>Nilai Koordinator</th>
               <th>Angka Akhir</th>
@@ -71,7 +54,8 @@
             <tr>
               <td>1</td>
               <td>Tata Tulis</td>
-              <td>{{ nilai_detail.nilai_tata_tulis_penguji }}</td>
+              <td>{{ nilai_detail.nilai_tata_tulis_penguji1 }}</td>
+              <td>{{ nilai_detail.nilai_tata_tulis_penguji2 }}</td>
               <td>{{ nilai_detail.nilai_tata_tulis_pembimbing }}</td>
               <td rowspan="6">{{ nilai_detail.nilai_koordinator }}</td>
               <td rowspan="6">
@@ -81,7 +65,6 @@
                   Tidak Ada Nilai
                 {% endif %}
               </td>
-              
               <td rowspan="6">
                 {% if nilai_detail.total_nilai >= 80 %}
                   A
@@ -107,31 +90,30 @@
             <tr>
               <td>2</td>
               <td>Kelengkapan Materi</td>
-              <td>{{ nilai_detail.nilai_kelengkapan_materi_penguji }}</td>
+              <td>{{ nilai_detail.nilai_kelengkapan_materi_penguji1 }}</td>
+              <td>{{ nilai_detail.nilai_kelengkapan_materi_penguji2 }}</td>
               <td>{{ nilai_detail.nilai_kelengkapan_materi_pembimbing }}</td>
             </tr>
             <tr>
               <td>3</td>
               <td>Pencapaian Tujuan</td>
-              <td>{{ nilai_detail.nilai_pencapaian_tujuan_penguji }}</td>
+              <td>{{ nilai_detail.nilai_pencapaian_tujuan_penguji1 }}</td>
+              <td>{{ nilai_detail.nilai_pencapaian_tujuan_penguji2 }}</td>
               <td>{{ nilai_detail.nilai_proses_bimbingan_pembimbing }}</td>
             </tr>
             <tr>
               <td>4</td>
               <td>Penguasaan Materi</td>
-              <td>{{ nilai_detail.nilai_penguasaan_materi_penguji }}</td>
+              <td>{{ nilai_detail.nilai_penguasaan_materi_penguji1 }}</td>
+              <td>{{ nilai_detail.nilai_penguasaan_materi_penguji2 }}</td>
               <td>{{ nilai_detail.nilai_penguasaan_materi_pembimbing }}</td>
             </tr>
             <tr>
               <td>5</td>
               <td>Presentasi</td>
-              <td>{{ nilai_detail.nilai_presentasi_penguji }}</td>
-              <td></td> <!-- Pembimbing tidak ada nilai presentasi -->
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>Nilai Koordinator</td>
-              <td colspan="2">{{ nilai_detail.nilai_koordinator }}</td>
+              <td>{{ nilai_detail.nilai_presentasi_penguji1 }}</td>
+              <td>{{ nilai_detail.nilai_presentasi_penguji2 }}</td>
+              <td></td>
             </tr>
           </tbody>
         </table>
@@ -140,7 +122,6 @@
       {% endif %}
     </main>
 
-    <!-- Rightbar Section -->
     {% include 'mahasiswa/fragment/rightbar.html' %}
   </div>
 </body>
