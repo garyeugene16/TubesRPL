@@ -264,6 +264,22 @@ color: white;
 background-color: #2d89ef;
 color: white;
 }
+
+.buttons .btn-update {
+  background-color: grey;
+  color: white;
+  }
+
+.active-update{
+  background-color: #5a9dea;
+  color: white;
+}
+
+.active-update:hover{
+  background-color: #5a9dea;
+  color: white;
+}
+
 .buttons .btn-unduh:hover {
 background-color: #5a9dea;
 color: white;

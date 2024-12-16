@@ -54,6 +54,7 @@
                             <button type="button" class="back-btn" onclick="backToStudentList()">Kembali</button>
                             <button type="submit" class="submit-btn">Upload BAP</button>
                             <button type="button" class="btn-unduh" onclick="downloadBap()">Unduh BAP</button>
+                            <button title="Tombol akan otomatis menyala jika seluruh nilai pada sidang sudah lengkap." disabled type="button" class="btn-update" onclick="updateBAP()">Update BAP</button>
                         </div>
                     </form>
                 </div>
@@ -83,10 +84,24 @@
             fetch(`/koordinator/get-bap/${idSidang}`)
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data)
+                    const tombolUpdate = document.getElementsByClassName('btn-update')[0]
+                    console.log(tombolUpdate)
                     const bapInfo = document.getElementById('bap-info');
                     const pdfPreview = document.getElementById('pdf-preview');
                     const pdfEmbed = document.getElementById('pdf-embed');
                     const uploadForm = document.getElementById('bapForm');
+
+                    if(data.total_nilai != null){
+                        tombolUpdate.disabled = false;
+                        tombolUpdate.title = "Update BAP!";
+                        tombolUpdate.classList.add('active-update');
+                    }
+                    else{
+                        tombolUpdate.disabled = true;
+                        tombolUpdate.classList.remove('active-update');
+                        tombolUpdate.title = "Tombol akan otomatis menyala jika seluruh nilai pada sidang sudah lengkap.";
+                    }
                     //jika belum disetujui pihak sebelumnya case ini koordinator pasti pertama
                     if(true) {
                         uploadForm.style.display = 'block';
@@ -142,6 +157,11 @@
             const idSidang = document.getElementById('id_sidang').value;
             window.location.href = `/koordinator/download-bap/${idSidang}`;
         }
+        function updateBAP() {
+            const idSidang = document.getElementById('id_sidang').value;
+            window.location.href = `/koordinator/update-bap/${idSidang}`;
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
           const today = new Date();
           const currentMonth = today.getMonth(); // Desember = 11
